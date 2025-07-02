@@ -104,12 +104,7 @@ az keyvault secret show --vault-name "jasmin-catering-kv" --name "azure-ai-api-k
 2. **Three-Tier Pricing**: Basis (25-35€), Standard (35-45€), Premium (50-70€)
 3. **Personalization**: Addresses specific customer requirements
 
-### Phase 4: Email Delivery (Simulated)
-1. **Draft Creation**: Response is prepared but not sent via SMTP
-2. **Logging**: Transaction details are stored for monitoring
-3. **Status Tracking**: Success/failure status is recorded
-
-### Real Email Processing (Manual Script)
+### Phase 4: Email Delivery (Real Implementation)
 For actual email processing, use the Python scripts:
 ```bash
 # Send test inquiry emails
