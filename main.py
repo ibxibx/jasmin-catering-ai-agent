@@ -84,8 +84,8 @@ class JasminCateringApp:
                             print(f"📚 Used {len(documents)} RAG documents")
                             print(f"💰 Pricing: {info.get('pricing', {})}")
                             
-                            # Post to Slack
-                            self.slack.post_ai_response(email_data['subject'], info)
+                            # Post to Slack with full response
+                            self.slack.post_ai_response(email_data['subject'], info, response)
                         else:
                             error_count += 1
                             print("❌ Failed to send response")
@@ -93,6 +93,9 @@ class JasminCateringApp:
                     else:
                         error_count += 1
                         print("❌ Failed to generate AI response")
+                        # Post error to Slack with error info
+                        error_info = {"error": "AI response generation failed", "documents_used": 0, "processing_time": "N/A"}
+                        self.slack.post_ai_response(email_data['subject'], error_info)
                         self.slack.log(f"AI generation failed for: {email_data['subject']}", "error")
                         
                 except Exception as e:
