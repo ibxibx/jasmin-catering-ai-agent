@@ -2,9 +2,11 @@
 """
 Main application for Jasmin Catering AI Agent
 Processes emails with AI + RAG + Slack notifications
+Optimized for Azure Container Apps Jobs
 """
 
 import time
+import os
 from datetime import datetime
 from core.email_processor import EmailProcessor
 from core.ai_assistant import JasminAIAssistant
@@ -124,10 +126,16 @@ class JasminCateringApp:
 
 
 def main():
-    """Entry point"""
+    """Entry point - runs email processing once"""
+    print("🚀 Starting Jasmin Catering AI Agent (Container Apps Jobs)")
+    
     app = JasminCateringApp()
-    app.run(test_mode=True)
-
+    
+    # Determine if running in production based on environment
+    is_production = os.getenv('AZURE_CONTAINER_APPS') == 'true'
+    app.run(test_mode=not is_production)
+    
+    print("✅ Email processing completed")
 
 if __name__ == "__main__":
     main()
