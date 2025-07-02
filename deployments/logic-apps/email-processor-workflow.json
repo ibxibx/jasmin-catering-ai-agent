@@ -64,7 +64,7 @@
             "type": "Http",
             "inputs": {
               "method": "POST",
-              "uri": "https://jasmin-catering-resource.cognitiveservices.azure.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-01",
+              "uri": "https://swedencentral.api.cognitive.microsoft.com/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-01",
               "headers": {
                 "Content-Type": "application/json",
                 "api-key": "@parameters('apiKey')"

@@ -1,299 +1,340 @@
-# 🍽️ Jasmin Catering AI Agent
+# Jasmin Catering AI Agent
 
-## 🚀 **Current Implementation: Azure Logic Apps + AI Foundry**
+An intelligent email processing system that automatically responds to catering inquiries using Azure AI services. The system processes emails sent to `ma3u-test@email.de`, generates professional catering offers in German, and sends responses back to customers.
 
-Automated email processing system for Jasmin Catering - a Syrian fusion restaurant in Berlin. The system monitors emails sent to `ma3u-test@email.de`, generates professional catering offers in German using GPT-4 through Azure AI Foundry, and creates email drafts for review.
-
-### ✅ **What's Working Now:**
-- **Email Filtering**: Only processes emails sent TO `ma3u-test@email.de`
-- **AI Processing**: Azure AI Foundry (GPT-4) for intelligent response generation
-- **Automated Offers**: Calculates pricing based on guest count (35-45€/person)
-- **German Templates**: Professional responses with Syrian fusion menu suggestions
-- **Sweden Central Region**: Default deployment target due to Azure restrictions
-
----
-
-## 📁 **Project Structure**
+## 🏗️ Architecture Overview
 
 ```
-jasmin-catering-ai-agent/
-├── README.md                       # This documentation
-├── CLAUDE.md                       # Guide for future Claude instances
-├── .env                           # Environment configuration (not in Git)
-├── .gitignore                     # Git ignore rules
-├── deployments/                   # All deployment assets
-│   ├── scripts/                   # Deployment and utility scripts
-│   │   ├── deploy-main.sh        # Main deployment script
-│   │   ├── deploy-ai-foundry.sh  # AI Foundry deployment script
-│   │   ├── load-env-config.sh    # Environment configuration loader
-│   │   ├── monitor-logic-app.sh  # Monitoring script
-│   │   ├── send-test-email.sh    # Test email information script
-│   │   └── send-test-email.py    # Python test email sender
-│   ├── logic-apps/               # Logic App workflow definitions
-│   │   ├── email-processor-workflow.json  # Main workflow definition
-│   │   └── ai-foundry-workflow.json       # AI Foundry specific workflow
-│   ├── archive/                  # Experimental/deprecated scripts
-│   │   ├── scripts/              # Archived Python and shell scripts
-│   │   ├── logic-apps/           # Archived workflow definitions
-│   │   └── README.md             # Archive documentation
-│   ├── terraform/                # Infrastructure as Code (Terraform)
-│   │   ├── main.tf              # Main Terraform configuration
-│   │   ├── variables.tf         # Variable definitions
-│   │   ├── outputs.tf           # Output definitions
-│   │   ├── logic_app_complete.tf # Complete Logic App deployment
-│   │   ├── terraform.tfvars.example # Example variables file
-│   │   ├── README.md            # Terraform documentation
-│   │   └── .gitignore           # Terraform-specific ignores
-│   └── templates/                # Email templates and examples
-│       └── email-draft-example.md
-└── docs/                         # Additional documentation
+📧 Customer Email → 🔄 AI Processing → 📤 Automated Response
+    (Inquiry)         (Azure Logic Apps      (Professional Offer)
+                      + Azure OpenAI)
 ```
 
----
+## 📋 Table of Contents
 
-## 🏗️ **Architecture**
+- [Azure Resources Deployed](#azure-resources-deployed)
+- [Azure Key Vault Configuration](#azure-key-vault-configuration)
+- [Workflow Sequential Process](#workflow-sequential-process)
+- [Getting Started with Azure](#getting-started-with-azure)
+- [Project Status](#project-status)
+- [Prerequisites](#prerequisites)
+- [Deployment Guide](#deployment-guide)
+- [Troubleshooting](#troubleshooting)
+- [Next Steps](#next-steps)
 
-```mermaid
-graph TD
-    A[📧 Email Inbox] --> B{🔍 Filter}
-    B -->|TO: ma3u-test@email.de| C[✅ Process Email]
-    B -->|Other Recipients| D[❌ Ignore]
-    C --> E[🤖 Azure AI Foundry]
-    E --> F[📝 Generate Offer]
-    F --> G[💾 Store Draft]
-    G --> H[📤 Ready for Review]
-    
-    subgraph "Azure AI Platform"
-        E
-        N[AI Project:<br/>jasmin-catering]
-        O[AI Services Resource]
-        J[GPT-4 Model]
-    end
-    
-    subgraph "Logic App"
-        I[Sweden Central<br/>Region]
-        B
-        C
-    end
-    
-    subgraph "Processing Steps"
-        K[Extract Details]
-        L[Calculate Pricing]
-        M[Generate German Response]
-    end
-```
+## 🏢 Azure Resources Deployed
 
----
+### 1. Resource Group
+- **Name**: `logicapp-jasmin-sweden_group`
+- **Location**: Sweden Central
+- **Purpose**: Container for all project resources
+- **Learn More**: [Azure Resource Groups](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal)
 
-## 🚀 **Quick Start**
+### 2. Azure Logic Apps
+#### Main Logic App: `jasmin-order-processor-sweden`
+- **Type**: Consumption Logic App
+- **Location**: Sweden Central  
+- **Trigger**: Recurrence (every 5 minutes)
+- **Purpose**: Processes simulated email queues and generates AI responses
+- **Learn More**: [Azure Logic Apps](https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-overview)
 
-### **Prerequisites**
-- Azure CLI installed (`brew install azure-cli`)
-- Azure subscription with access
-- `.env` file with required credentials
+#### Test Logic App: `jasmin-email-test-sender`
+- **Type**: Consumption Logic App
+- **Location**: Sweden Central
+- **Trigger**: Manual HTTP trigger
+- **Purpose**: Processes test email scenarios for demonstration
+- **Learn More**: [Logic Apps Triggers](https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-workflow-actions-triggers)
 
-### **1. Clone & Configure**
+### 3. Azure OpenAI Service
+- **Name**: `jasmin-catering-ai`
+- **SKU**: S0 (Standard)
+- **Location**: Sweden Central
+- **Model Deployed**: GPT-4o (2024-05-13)
+- **Deployment Name**: `gpt-4o`
+- **Purpose**: Generates intelligent catering responses
+- **Learn More**: [Azure OpenAI Service](https://learn.microsoft.com/en-us/azure/ai-services/openai/overview)
+
+### 4. Azure Key Vault
+- **Name**: `jasmin-catering-kv`
+- **Location**: Sweden Central
+- **Access Policy**: Classic access policies enabled
+- **Purpose**: Securely stores credentials and API keys
+- **Learn More**: [Azure Key Vault](https://learn.microsoft.com/en-us/azure/key-vault/general/overview)
+
+## 🔐 Azure Key Vault Configuration
+
+The following secrets are stored in `jasmin-catering-kv`:
+
+| Secret Name | Purpose | Example Value |
+|-------------|---------|---------------|
+| `azure-subscription-id` | Azure subscription identifier | `6576090b-36b2-4ba1-94ae-d2f52eed2789` |
+| `azure-tenant-id` | Azure AD tenant identifier | `b4b6ea88-f8b8-4539-a42d-b5e46434242b` |
+| `azure-user-email` | Azure account email | `matthias.buchhorn@web.de` |
+| `azure-ai-api-key` | OpenAI service API key | `2862cfed401f41f990fc67ea952c2a8d` |
+| `from-email-address` | Sender email address | `matthias.buchhorn@web.de` |
+| `from-email-password` | Email app-specific password | `SLFYZ5QN3PP6ZP575C4L` |
+| `webde-app-password` | Web.de SMTP authentication | `SLFYZ5QN3PP6ZP575C4L` |
+
+### Accessing Key Vault Secrets
 ```bash
-git clone [repository-url]
+# List all secrets
+az keyvault secret list --vault-name "jasmin-catering-kv"
+
+# Get a specific secret
+az keyvault secret show --vault-name "jasmin-catering-kv" --name "azure-ai-api-key"
+```
+
+**Learn More**: [Key Vault Secret Management](https://learn.microsoft.com/en-us/azure/key-vault/secrets/about-secrets)
+
+## 🔄 Workflow Sequential Process
+
+### Phase 1: Email Reception (Simulated)
+1. **Timer Trigger**: Logic App runs every 5 minutes
+2. **Email Queue**: Simulated test emails are created in the workflow
+3. **Filtering**: Only emails to `ma3u-test@email.de` are processed
+
+### Phase 2: AI Processing
+1. **Email Extraction**: Relevant email details are extracted
+2. **AI API Call**: Request sent to Azure OpenAI GPT-4o model
+3. **Prompt Engineering**: System prompt configures AI as Jasmin Catering consultant
+4. **Response Generation**: AI creates professional German catering offers
+
+### Phase 3: Response Formatting
+1. **Template Application**: Response includes company branding
+2. **Three-Tier Pricing**: Basis (25-35€), Standard (35-45€), Premium (50-70€)
+3. **Personalization**: Addresses specific customer requirements
+
+### Phase 4: Email Delivery (Real Implementation)
+For actual email processing, use the Python scripts:
+```bash
+# Send test inquiry emails
+python send-catering-emails.py
+
+# Process and respond to emails
+python process-all-emails.py
+```
+
+## 🚀 Getting Started with Azure
+
+### 1. Azure Account Setup
+- **Create Account**: [Azure Free Account](https://azure.microsoft.com/free/)
+- **Azure CLI**: [Install Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+- **Authentication**: [Azure CLI Login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli)
+
+### 2. Required Azure Services
+- **Logic Apps**: [Logic Apps Pricing](https://azure.microsoft.com/pricing/details/logic-apps/)
+- **OpenAI Service**: [OpenAI Service Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/)
+- **Key Vault**: [Key Vault Pricing](https://azure.microsoft.com/pricing/details/key-vault/)
+
+### 3. Azure Regions
+This project uses **Sweden Central** due to GPT-4o availability.
+- **Check Availability**: [Azure Products by Region](https://azure.microsoft.com/global-infrastructure/services/)
+
+## ✅ Project Status
+
+### ✅ Completed Tasks
+
+#### Infrastructure & Authentication
+- [x] Azure subscription setup and authentication
+- [x] Resource group creation in Sweden Central
+- [x] Azure CLI configuration and login
+- [x] Environment variables configuration in `.env`
+- [x] Azure Key Vault deployment and secret storage
+
+#### AI Services
+- [x] Azure OpenAI service deployment
+- [x] GPT-4o model deployment and configuration
+- [x] AI prompt engineering for catering responses
+- [x] Three-tier pricing system implementation
+
+#### Logic Apps Development
+- [x] Main Logic App workflow creation
+- [x] Test Logic App for email scenarios
+- [x] Email filtering and processing logic
+- [x] AI integration and response generation
+- [x] Error handling and logging
+
+#### Email Integration
+- [x] Web.de SMTP configuration and testing
+- [x] Email authentication with app-specific passwords
+- [x] Test email sending functionality
+- [x] Real email processing with Python scripts
+- [x] End-to-end email workflow testing
+
+#### Testing & Validation
+- [x] 5 diverse test email scenarios created
+- [x] AI response generation testing
+- [x] Email delivery confirmation
+- [x] Professional German language responses
+- [x] Customer-specific requirement handling
+
+### 🔄 In Progress Tasks
+
+#### Email Automation
+- [ ] Real-time email polling integration in Logic Apps
+- [ ] IMAP connector configuration for live email processing
+- [ ] Automatic email response sending via Logic Apps
+
+#### Production Readiness
+- [ ] Production email system integration (info@jasmincatering.com)
+- [ ] 1&1/IONOS email configuration
+- [ ] SSL certificate and domain setup
+
+### 📋 Pending Tasks
+
+#### Enhanced AI Capabilities
+- [ ] RAG (Retrieval Augmented Generation) system implementation
+- [ ] Document upload to Azure AI Studio vector store
+- [ ] Business knowledge base integration
+- [ ] Menu and pricing database connection
+
+#### Monitoring & Operations
+- [ ] Azure Monitor alerts and dashboards
+- [ ] Application Insights integration
+- [ ] Performance monitoring and optimization
+- [ ] Cost monitoring and optimization
+
+#### Advanced Features
+- [ ] Customer follow-up automation
+- [ ] CRM system integration
+- [ ] Multi-language support
+- [ ] Booking confirmation system
+- [ ] Payment processing integration
+
+#### Security & Compliance
+- [ ] Azure Active Directory integration
+- [ ] Role-based access control (RBAC)
+- [ ] Data encryption at rest
+- [ ] GDPR compliance measures
+- [ ] Audit logging and compliance reporting
+
+## 📚 Prerequisites
+
+### Required Tools
+- **Azure CLI**: [Installation Guide](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
+- **Python 3.8+**: For email processing scripts
+- **Git**: For version control
+
+### Required Knowledge
+- **Basic Azure Concepts**: [Azure Fundamentals](https://learn.microsoft.com/en-us/training/paths/azure-fundamentals/)
+- **Logic Apps Basics**: [Logic Apps Learning Path](https://learn.microsoft.com/en-us/training/paths/build-workflows-with-logic-apps/)
+- **AI Services Overview**: [AI Services Learning Path](https://learn.microsoft.com/en-us/training/paths/get-started-with-artificial-intelligence-on-azure/)
+
+### Azure Permissions Required
+- **Contributor** role on the subscription
+- **Key Vault Administrator** for secret management
+- **Cognitive Services Contributor** for AI services
+
+## 🚀 Deployment Guide
+
+### 1. Clone Repository
+```bash
+git clone <repository-url>
 cd jasmin-catering-ai-agent
+```
 
-# Create .env file with your credentials
+### 2. Configure Environment
+```bash
+# Copy and edit environment file
 cp .env.example .env
-# Edit .env with your values
+# Edit .env with your credentials
 ```
 
-### **2. Deploy**
+### 3. Azure Login
 ```bash
-cd deployments/scripts
-./deploy-main.sh
+az login
+az account set --subscription "your-subscription-id"
 ```
 
-### **3. Monitor**
+### 4. Deploy Resources
 ```bash
-./monitor-logic-app.sh
+# Make deployment script executable
+chmod +x deployments/scripts/deploy-main.sh
+
+# Run deployment
+./deployments/scripts/deploy-main.sh
 ```
 
----
-
-## 🔧 **Deployment Options**
-
-### **Option 1: Shell Scripts (Recommended)**
-
-The deployment scripts have been cleaned and organized. Only production-ready scripts remain in the main directories.
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `deploy-ai-foundry.sh` | Deploy with AI Foundry integration | `./deploy-ai-foundry.sh` |
-| `deploy-main.sh` | Basic deployment script | `./deploy-main.sh` |
-| `load-env-config.sh` | Loads environment configuration | Sourced by other scripts |
-| `monitor-logic-app.sh` | Monitors Logic App runs | `./monitor-logic-app.sh` |
-| `send-test-email.sh` | Shows test email configuration | `./send-test-email.sh` |
-| `send-test-email.py` | Python script to send test emails | `python send-test-email.py` |
-
-**Note**: Experimental scripts (Assistant API, RAG, vector DB) have been moved to `deployments/archive/`
-
-### **Option 2: Terraform (Infrastructure as Code)**
-
-For production deployments, use the Terraform configuration in `deployments/terraform/`:
-
+### 5. Test Email System
 ```bash
-cd deployments/terraform
+# Install Python dependencies
+pip install -r requirements.txt
 
-# Initialize Terraform
-terraform init
+# Send test emails
+python send-catering-emails.py
 
-# Copy and configure variables
-cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your values
-
-# Plan deployment
-terraform plan
-
-# Apply configuration
-terraform apply
+# Process responses
+python process-all-emails.py
 ```
 
-**Benefits of Terraform:**
-- Declarative infrastructure definition
-- State management and version control
-- Easy rollback and disaster recovery
-- Better team collaboration
-- Modular and reusable code
+## 🔧 Troubleshooting
 
-See `deployments/terraform/README.md` for detailed Terraform documentation.
+### Common Issues
 
----
+#### Authentication Errors
+- **Issue**: `Authentication credentials invalid`
+- **Solution**: Regenerate app-specific password in web.de settings
+- **Reference**: [Web.de App Passwords](https://hilfe.web.de/email/sicherheit/app-passwort.html)
 
-## 🤖 **AI Service: Azure AI Foundry**
+#### Logic App Deployment Failures
+- **Issue**: Resource not found errors
+- **Solution**: Ensure resource group exists and correct region is selected
+- **Reference**: [Logic Apps Troubleshooting](https://learn.microsoft.com/en-us/azure/logic-apps/logic-apps-troubleshoot-and-diagnose-workflow-failures)
 
-We use **Azure AI Foundry** for AI capabilities:
+#### OpenAI API Errors
+- **Issue**: Model not available in region
+- **Solution**: Use Sweden Central or other supported regions
+- **Reference**: [OpenAI Model Availability](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)
 
-1. **Unified Platform**: AI Foundry provides a comprehensive AI development platform
-2. **Project Management**: Organized AI resources under the `jasmin-catering` project
-3. **Model Access**: Direct access to GPT-4 and other models
-4. **Integration**: Seamless integration with other Azure AI services
-
-**Technical Details:**
-- **AI Project**: jasmin-catering
-- **Resource**: jasmin-catering-resource (AI Services)
-- **Endpoint**: The AI Foundry project uses the underlying AI Services endpoint
-- **API Format**: OpenAI-compatible REST API
-
-**Endpoint Format:**
-```
-https://jasmin-catering-resource.cognitiveservices.azure.com/openai/deployments/gpt-4o/chat/completions
-```
-
-*Note: AI Foundry projects utilize AI Services infrastructure, which is why the endpoint appears as a Cognitive Services URL. This is the standard Azure AI architecture.*
-
----
-
-## 🌍 **Region: Sweden Central**
-
-**Default Region**: `swedencentral`
-
-Due to Azure restrictions in West Europe, all deployments default to Sweden Central. This is configured in:
-- `load-env-config.sh`: Sets default region
-- `deploy-main.sh`: Forces Sweden Central
-- Resource group: `logicapp-jasmin-sweden_group`
-
----
-
-## 📊 **Monitoring & Testing**
-
-### **Check Deployment Status:**
+### Debugging Commands
 ```bash
-az logic workflow show \
-  --resource-group logicapp-jasmin-sweden_group \
-  --name jasmin-order-processor-sweden \
-  --query state
+# Check Logic App status
+az logic workflow show --resource-group "logicapp-jasmin-sweden_group" --name "jasmin-order-processor-sweden"
+
+# View Key Vault secrets
+az keyvault secret list --vault-name "jasmin-catering-kv"
+
+# Test email configuration
+python test-webde-auth.py
 ```
 
-### **View Recent Runs:**
-```bash
-./monitor-logic-app.sh
-```
+## 🎯 Next Steps
 
-### **Test Email Processing:**
-Since the Logic App uses a timer trigger and simulates emails, you can:
+### Immediate Actions (Next 1-2 weeks)
+1. **Implement real-time email processing** in Logic Apps
+2. **Set up production email** integration with info@jasmincatering.com
+3. **Deploy monitoring dashboards** for operational visibility
 
-1. **View test email information:**
-   ```bash
-   ./deployments/scripts/send-test-email.sh
-   ```
+### Short-term Goals (Next 1-2 months)
+1. **RAG system implementation** for enhanced AI responses
+2. **Customer follow-up automation** for unconfirmed offers
+3. **Performance optimization** and cost management
 
-2. **Monitor Logic App runs (real-time):**
-   ```bash
-   # List recent runs
-   az rest --method get \
-     --uri "https://management.azure.com/subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/logicapp-jasmin-sweden_group/providers/Microsoft.Logic/workflows/jasmin-order-processor-sweden/runs?api-version=2019-05-01&\$top=5" \
-     --query "value[0:5].{Name:name,Status:properties.status,StartTime:properties.startTime}" \
-     --output table
-   ```
+### Long-term Vision (Next 3-6 months)
+1. **Multi-channel support** (WhatsApp, web forms, social media)
+2. **Advanced analytics** and business intelligence
+3. **Integration with booking and payment systems**
 
----
+## 🤝 Contributing
 
-## 🔐 **Configuration (.env)**
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-Required environment variables:
-```bash
-# Azure
-AZURE_SUBSCRIPTION_ID=your-subscription-id
-AZURE_RESOURCE_GROUP=logicapp-jasmin-catering_group
-AZURE_AI_API_KEY=your-api-key
+## 📞 Support
 
-# Email
-WEBDE_EMAIL_ALIAS=ma3u-test@email.de
-WEBDE_APP_PASSWORD=your-app-password
-```
+For questions or issues:
+- **Azure Support**: [Azure Support Plans](https://azure.microsoft.com/support/plans/)
+- **Documentation**: [Azure Documentation](https://learn.microsoft.com/en-us/azure/)
+- **Community**: [Azure Community](https://techcommunity.microsoft.com/t5/azure/ct-p/Azure)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-## 🚨 **Important Notes**
-
-1. **Email Filter**: Only processes emails sent TO `ma3u-test@email.de`
-2. **Region**: Always uses Sweden Central (West Europe restricted)
-3. **API Key**: Stored in `.env`, never in code
-4. **Pricing**: Calculated at 35-45€ per person
-5. **Language**: All customer communication in German
-
----
-
-## 🛠️ **Troubleshooting**
-
-### **Deployment Fails**
-- Check Azure login: `az login`
-- Verify subscription: `az account show`
-- Ensure `.env` file exists with all variables
-
-### **No Emails Processed**
-- Verify email is sent TO `ma3u-test@email.de`
-- Check Logic App is enabled
-- Review filter conditions in workflow
-
-### **AI Errors**
-- Verify API key in `.env`
-- Check endpoint URL format
-- Ensure Cognitive Services resource exists
-
----
-
-## 📈 **Next Steps**
-
-1. **Production Email**: Migrate from test to `info@jasmincatering.com`
-2. **IMAP Integration**: Replace simulation with real email monitoring
-3. **Approval Workflow**: Add Teams/Slack approval before sending
-4. **SMTP Sending**: Automated email responses
-
----
-
-## 👥 **Contributing**
-
-1. Check `CLAUDE.md` for AI assistant guidance
-2. Follow existing code patterns
-3. Test deployments in Sweden Central
-4. Update documentation for changes
-
----
-
-Built for Jasmin Catering - Syrian Fusion Cuisine in Berlin 🇸🇾🇩🇪
+**🤖 Powered by Azure AI Services**  
+*Automatically generating professional catering responses since 2025*
