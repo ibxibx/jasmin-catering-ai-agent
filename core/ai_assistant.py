@@ -19,33 +19,48 @@ class JasminAIAssistant:
         self.index_name = SEARCH_CONFIG['index_name']
         
     def search_knowledge_base(self, query: str, top: int = 3) -> List[Dict]:
-        """Search RAG documents in Azure AI Search"""
-        headers = {
-            'Content-Type': 'application/json',
-            'api-key': self.search_key
-        }
+        """Search RAG documents from local knowledge base (Azure AI Search removed)"""
+        # Since Azure AI Search was removed for cost optimization,
+        # we'll use embedded business knowledge instead
         
-        payload = {
-            "search": query,
-            "searchMode": "all",
-            "top": top,
-            "select": "title,content,category"
-        }
+        # Return mock documents representing our business knowledge
+        mock_documents = [
+            {
+                "title": "Jasmin Catering - Pricing Structure",
+                "content": """Preisstruktur für Jasmin Catering:
+                
+BASIS-PAKET (25-35€/Person):
+- 3-4 Vorspeisen: Hummus, Tabouleh, Fattoush, Baba Ghanoush
+- 2-3 Hauptgerichte: Shish Taouk, Falafel, Kibbeh
+- Beilagen: Reis, Bulgur, Pita-Brot
+- Dessert: Baklava oder Ma'amoul
+
+STANDARD-PAKET (35-45€/Person):
+- 4-5 Vorspeisen: Basis + Muhammara, Labneh
+- 3-4 Hauptgerichte: Basis + Lamb Kofta, Sauerbraten Shawarma
+- Premium-Beilagen: Safran-Reis, Za'atar-Brot
+- Dessert-Auswahl: Baklava, Ma'amoul, Halva
+
+PREMIUM-PAKET (50-70€/Person):
+- 6-8 Meze-Vorspeisen: Vollständige Auswahl
+- 4-5 Hauptgerichte: Alle + Syrian Wagyu, Premium Lamm
+- Getränke-Service: Arabischer Kaffee, Tee-Service
+- Vollständiges Dessert-Buffet
+
+RABATTE:
+- Werktags (Mo-Do): 10% Rabatt
+- Große Gruppen (50+ Personen): 10% Rabatt
+- Gemeinnützige Organisationen: 10% Rabatt
+
+ZUSCHLÄGE:
+- Wochenende (Sa-So): +10%
+- Eilaufträge (<48h): +25%
+- Feiertage: +20%""",
+                "category": "pricing"
+            }
+        ]
         
-        try:
-            response = requests.post(
-                f"{self.search_endpoint}/indexes/{self.index_name}/docs/search?api-version=2021-04-30-Preview",
-                headers=headers,
-                json=payload
-            )
-            
-            if response.status_code == 200:
-                return response.json().get('value', [])
-            return []
-            
-        except Exception as e:
-            print(f"Search error: {e}")
-            return []
+        return mock_documents
     
     def generate_response(self, email_subject: str, email_body: str) -> Tuple[str, List[Dict], Dict]:
         """Generate AI response with RAG context"""

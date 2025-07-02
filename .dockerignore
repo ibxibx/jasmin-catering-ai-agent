@@ -1,0 +1,47 @@
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+.env.local
+.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Documentation
+*.md
+docs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Azure
+.azure/
+
+# Temporary files
+temp/
+tmp/
