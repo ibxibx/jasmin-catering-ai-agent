@@ -9,7 +9,7 @@ import time
 import os
 from datetime import datetime
 from core.email_processor import EmailProcessor
-from core.ai_assistant import JasminAIAssistant
+from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI
 from core.slack_notifier import SlackNotifier
 from config.settings import BUSINESS_CONFIG
 
@@ -19,7 +19,7 @@ class JasminCateringApp:
     
     def __init__(self):
         self.email_processor = EmailProcessor()
-        self.ai_assistant = JasminAIAssistant()
+        self.ai_assistant = JasminAIAssistantOpenAI()
         self.slack = SlackNotifier()
         
     def run(self, test_mode: bool = False):

@@ -1,0 +1,56 @@
+{
+  "agent_id": "asst_UHTUDffJEyLQ6qexElqOopac",
+  "agent_name": "Jasmin Catering Agent",
+  "model": "gpt-4o",
+  "endpoint": "https://jasmin-openai-372bb9.openai.azure.com/",
+  "api_version": "2024-05-01-preview",
+  "created_at": "2025-07-02",
+  "metadata": {
+    "created_by": "jasmin-catering-ai-agent",
+    "version": "2.0",
+    "includes_rag": "true"
+  },
+  "vector_store_id": "vs_xDbEaqnBNUtJ70P7GoNgY1qD",
+  "vector_store_name": "AssistantVectorStore_Jasmin",
+  "uploaded_files": [
+    {
+      "filename": "catering-brief.md",
+      "description": "Gesch\u00e4ftsprozess und System-Anforderungen",
+      "file_id": "assistant-BFjrHArDvusxRUr3rJkF3f",
+      "vector_store_file_id": "assistant-BFjrHArDvusxRUr3rJkF3f"
+    },
+    {
+      "filename": "business-conditions.md",
+      "description": "Gesch\u00e4ftsbedingungen und Preisstruktur",
+      "file_id": "assistant-JoXkWRSQF1Vhryin7TizgX",
+      "vector_store_file_id": "assistant-JoXkWRSQF1Vhryin7TizgX"
+    },
+    {
+      "filename": "vegetarian-offer-template.md",
+      "description": "Vorlage f\u00fcr vegetarische Angebote",
+      "file_id": "assistant-X3MxAxuGEeQnm7rEJq2z3Q",
+      "vector_store_file_id": "assistant-X3MxAxuGEeQnm7rEJq2z3Q"
+    },
+    {
+      "filename": "response-examples.md",
+      "description": "Beispiele f\u00fcr professionelle Antworten",
+      "file_id": "assistant-W65tS9JgAPCra86jNmh2wY",
+      "vector_store_file_id": "assistant-W65tS9JgAPCra86jNmh2wY"
+    },
+    {
+      "filename": "email-template.md",
+      "description": "Email-Vorlagen und Kommunikationsstandards",
+      "file_id": "assistant-JFhmqteJ7ADMT1kr94RN8j",
+      "vector_store_file_id": "assistant-JFhmqteJ7ADMT1kr94RN8j"
+    },
+    {
+      "filename": "jasmin_catering_prompt.md",
+      "description": "Agent-Anweisungen und RAG-Kontext",
+      "file_id": "assistant-YASZfpLZFRqLLMMG5Gs6Rz",
+      "vector_store_file_id": "assistant-YASZfpLZFRqLLMMG5Gs6Rz"
+    }
+  ],
+  "knowledge_uploaded": true,
+  "upload_date": "2025-07-02",
+  "upload_method": "REST API"
+}

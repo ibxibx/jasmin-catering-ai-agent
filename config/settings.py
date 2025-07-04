@@ -18,9 +18,10 @@ AZURE_CONFIG = {
 
 # AI Services Configuration
 AI_CONFIG = {
-    'endpoint': os.getenv('AZURE_AI_ENDPOINT', 'https://swedencentral.api.cognitive.microsoft.com'),
-    'api_key': os.getenv('AZURE_AI_API_KEY'),
-    'deployment_name': 'gpt-4o',
+    'endpoint': os.getenv('AZURE_OPENAI_ENDPOINT', os.getenv('AZURE_AI_ENDPOINT', 'https://swedencentral.api.cognitive.microsoft.com')),
+    'api_key': os.getenv('AZURE_OPENAI_API_KEY', os.getenv('AZURE_AI_API_KEY')),
+    'deployment_name': os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME', 'gpt-4o'),
+
     'temperature': 0.3,
     'max_tokens': 2500,
 }
