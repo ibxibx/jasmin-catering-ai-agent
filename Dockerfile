@@ -18,6 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY config/ ./config/
 COPY core/ ./core/
 COPY main.py .
+COPY agent-config.json .
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app \

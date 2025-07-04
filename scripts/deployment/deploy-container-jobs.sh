@@ -34,7 +34,8 @@ echo "✅ Docker image updated and pushed"
 
 # Get secrets from Key Vault
 echo "3. Retrieving secrets from Key Vault..."
-AZURE_AI_API_KEY=$(az keyvault secret show --vault-name $KEY_VAULT_NAME --name "azure-ai-api-key" --query "value" -o tsv)
+OPENAI_API_KEY=$(az keyvault secret show --vault-name $KEY_VAULT_NAME --name "openai-api-key" --query "value" -o tsv)
+OPENAI_ENDPOINT=$(az keyvault secret show --vault-name $KEY_VAULT_NAME --name "openai-endpoint" --query "value" -o tsv)
 WEBDE_APP_PASSWORD=$(az keyvault secret show --vault-name $KEY_VAULT_NAME --name "webde-app-password" --query "value" -o tsv)
 SLACK_BOT_TOKEN=$(az keyvault secret show --vault-name $KEY_VAULT_NAME --name "slack-bot-token" --query "value" -o tsv)
 SLACK_CHANNEL_ID=$(az keyvault secret show --vault-name $KEY_VAULT_NAME --name "slack-channel-emailrequestsandresponse" --query "value" -o tsv)
@@ -76,8 +77,10 @@ az containerapp job create \
     --memory 0.5Gi \
     --cron-expression "*/5 * * * *" \
     --env-vars \
-        AZURE_AI_ENDPOINT="https://swedencentral.api.cognitive.microsoft.com" \
-        AZURE_AI_API_KEY="$AZURE_AI_API_KEY" \
+        AZURE_OPENAI_ENDPOINT="$OPENAI_ENDPOINT" \
+        AZURE_OPENAI_API_KEY="$OPENAI_API_KEY" \
+        AZURE_AI_ENDPOINT="$OPENAI_ENDPOINT" \
+        AZURE_AI_API_KEY="$OPENAI_API_KEY" \
         FROM_EMAIL_ADDRESS="matthias.buchhorn@web.de" \
         WEBDE_APP_PASSWORD="$WEBDE_APP_PASSWORD" \
         WEBDE_EMAIL_ALIAS="ma3u-test@email.de" \

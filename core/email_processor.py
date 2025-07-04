@@ -34,9 +34,9 @@ class EmailProcessor:
             mail.login(self.email_address, self.password)
             mail.select('inbox')
             
-            # Search for today's emails
+            # Search for today's emails sent TO the alias
             today = datetime.now().strftime("%d-%b-%Y")
-            status, messages = mail.search(None, f'(FROM "{self.email_address}") (SINCE "{today}")')
+            status, messages = mail.search(None, f'(TO "{self.alias}") (SINCE "{today}")')
             
             if status == 'OK':
                 email_ids = messages[0].split()
