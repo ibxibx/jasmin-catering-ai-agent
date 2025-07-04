@@ -1,0 +1,40 @@
+{
+  "summary": {
+    "successful_tests": 0,
+    "total_tests": 5,
+    "success_rate": "0.0%",
+    "test_date": "2025-07-02T22:34:38.615625"
+  },
+  "results": [
+    {
+      "test_number": 1,
+      "subject": "Firmenfeier f\u00fcr 75 Mitarbeiter - Donnerstag",
+      "success": false,
+      "error": "No response generated"
+    },
+    {
+      "test_number": 2,
+      "subject": "Vegetarische Hochzeit - 120 G\u00e4ste im Juni",
+      "success": false,
+      "error": "No response generated"
+    },
+    {
+      "test_number": 3,
+      "subject": "Dringend: Catering morgen f\u00fcr 25 Personen",
+      "success": false,
+      "error": "No response generated"
+    },
+    {
+      "test_number": 4,
+      "subject": "Hochzeit im Sommer - 200 G\u00e4ste Premium Service",
+      "success": false,
+      "error": "No response generated"
+    },
+    {
+      "test_number": 5,
+      "subject": "W\u00f6chentliches B\u00fcro-Catering - Mittwochs f\u00fcr 30 Personen",
+      "success": false,
+      "error": "No response generated"
+    }
+  ]
+}

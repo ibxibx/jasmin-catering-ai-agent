@@ -1,0 +1,184 @@
+{
+  "summary": {
+    "successful_tests": 5,
+    "total_tests": 5,
+    "success_rate": "100.0%",
+    "test_date": "2025-07-02T22:45:52.128227"
+  },
+  "results": [
+    {
+      "test_number": 1,
+      "subject": "Firmenfeier f\u00fcr 75 Mitarbeiter - Donnerstag",
+      "success": true,
+      "processing_time": "12.77s",
+      "ai_processing_time": "12.77s",
+      "documents_used": 1,
+      "tokens": {
+        "prompt_tokens": 732,
+        "completion_tokens": 729,
+        "total_tokens": 1461
+      },
+      "pricing_extracted": {},
+      "assistant_id": "asst_UHTUDffJEyLQ6qexElqOopac",
+      "analysis": {
+        "features_found": 8,
+        "total_features": 8,
+        "feature_details": {
+          "basis": true,
+          "standard": true,
+          "premium": true,
+          "75": true,
+          "donnerstag": true,
+          "buffet": true,
+          "warme": true,
+          "kalte": true
+        },
+        "has_pricing": false,
+        "professional_tone": true,
+        "three_options": true
+      },
+      "response_length": 2494,
+      "vector_store_used": false
+    },
+    {
+      "test_number": 2,
+      "subject": "Vegetarische Hochzeit - 120 G\u00e4ste im Juni",
+      "success": true,
+      "processing_time": "10.75s",
+      "ai_processing_time": "10.75s",
+      "documents_used": 1,
+      "tokens": {
+        "prompt_tokens": 722,
+        "completion_tokens": 733,
+        "total_tokens": 1455
+      },
+      "pricing_extracted": {
+        "Basis": "4.680,00\u20ac",
+        "Standard": "5.880,00\u20ac",
+        "Premium": "7.440,00\u20ac"
+      },
+      "assistant_id": "asst_UHTUDffJEyLQ6qexElqOopac",
+      "analysis": {
+        "features_found": 10,
+        "total_features": 10,
+        "feature_details": {
+          "vegetarisch": true,
+          "hochzeit": true,
+          "120": true,
+          "juni": true,
+          "samstag": true,
+          "drei": true,
+          "men\u00fc": true,
+          "basis": true,
+          "standard": true,
+          "premium": true
+        },
+        "has_pricing": true,
+        "professional_tone": true,
+        "three_options": true
+      },
+      "response_length": 2571,
+      "vector_store_used": false
+    },
+    {
+      "test_number": 3,
+      "subject": "Dringend: Catering morgen f\u00fcr 25 Personen",
+      "success": true,
+      "processing_time": "7.63s",
+      "ai_processing_time": "7.63s",
+      "documents_used": 1,
+      "tokens": {
+        "prompt_tokens": 723,
+        "completion_tokens": 466,
+        "total_tokens": 1189
+      },
+      "pricing_extracted": {},
+      "assistant_id": "asst_UHTUDffJEyLQ6qexElqOopac",
+      "analysis": {
+        "features_found": 2,
+        "total_features": 6,
+        "feature_details": {
+          "dringend": false,
+          "25": true,
+          "morgen": false,
+          "gesch\u00e4ftsbesprechung": true,
+          "eilauftrag": false,
+          "zuschlag": false
+        },
+        "has_pricing": false,
+        "professional_tone": true,
+        "three_options": true
+      },
+      "response_length": 1659,
+      "vector_store_used": false
+    },
+    {
+      "test_number": 4,
+      "subject": "Hochzeit im Sommer - 200 G\u00e4ste Premium Service",
+      "success": true,
+      "processing_time": "9.82s",
+      "ai_processing_time": "9.82s",
+      "documents_used": 1,
+      "tokens": {
+        "prompt_tokens": 720,
+        "completion_tokens": 687,
+        "total_tokens": 1407
+      },
+      "pricing_extracted": {},
+      "assistant_id": "asst_UHTUDffJEyLQ6qexElqOopac",
+      "analysis": {
+        "features_found": 5,
+        "total_features": 7,
+        "feature_details": {
+          "hochzeit": true,
+          "200": true,
+          "juli": false,
+          "premium": true,
+          "service": true,
+          "sommer": true,
+          "zuschlag": false
+        },
+        "has_pricing": false,
+        "professional_tone": true,
+        "three_options": true
+      },
+      "response_length": 2579,
+      "vector_store_used": false
+    },
+    {
+      "test_number": 5,
+      "subject": "W\u00f6chentliches B\u00fcro-Catering - Mittwochs f\u00fcr 30 Personen",
+      "success": true,
+      "processing_time": "8.67s",
+      "ai_processing_time": "8.67s",
+      "documents_used": 1,
+      "tokens": {
+        "prompt_tokens": 725,
+        "completion_tokens": 662,
+        "total_tokens": 1387
+      },
+      "pricing_extracted": {
+        "Basis": "13,50\u20ac"
+      },
+      "assistant_id": "asst_UHTUDffJEyLQ6qexElqOopac",
+      "analysis": {
+        "features_found": 5,
+        "total_features": 7,
+        "feature_details": {
+          "w\u00f6chentlich": true,
+          "mittwoch": true,
+          "30": true,
+          "startup": false,
+          "regelm\u00e4\u00dfig": true,
+          "rabatt": true,
+          "stammkunden": false
+        },
+        "has_pricing": true,
+        "professional_tone": true,
+        "three_options": true
+      },
+      "response_length": 2279,
+      "vector_store_used": false
+    }
+  ]
+}
