@@ -18,6 +18,7 @@ graph TB
         subgraph "AI Services"
             AOI[Azure OpenAI Assistant<br/>GPT-4.1 Model<br/>Vector Store RAG]
             VS[Vector Store<br/>AssistantVectorStore_Jasmin<br/>6 Knowledge Documents]
+
         end
         
         subgraph "Storage & Security"
@@ -33,6 +34,7 @@ graph TB
     end
     
     %% Workflow Connections
+
     CJ -->|Fetch Emails| EMAIL
     CJ -->|AI Processing| AOI
     AOI -->|Search Knowledge| VS
@@ -44,6 +46,7 @@ graph TB
     EMAIL -->|Auto Response| CUSTOMER
     
     %% Deployment Connections
+
     ACR -.->|Pull Image| CJ
     
     %% Styling
@@ -51,6 +54,7 @@ graph TB
     classDef external fill:#28a745,stroke:#1e7e34,stroke-width:2px,color:#fff
     classDef storage fill:#6f42c1,stroke:#563d7c,stroke-width:2px,color:#fff
     
+
     class CJ,AOI,VS azure
     class EMAIL,SLACK,CUSTOMER external
     class KV,ACR storage
@@ -68,6 +72,7 @@ sequenceDiagram
     participant KV as Key Vault
     participant CU as Customer
     
+
     Note over CJ: Cron: Every 5 minutes
     CJ->>KV: Retrieve secrets
     KV-->>CJ: Email & API credentials
@@ -94,6 +99,7 @@ sequenceDiagram
     
     CJ->>S: Post processing summary
     Note over CJ: Scale to zero
+
 ```
 
 ## 💰 Cost-Effective Cloud Architecture
@@ -101,12 +107,14 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph "Monthly Costs"
+
         subgraph "Compute ($2-8)"
             CJ2[Container Apps Jobs<br/>Scale-to-Zero<br/>Cron Schedule]
         end
         
         subgraph "AI Services ($50-80)"
             AOI2[Azure OpenAI Assistant<br/>GPT-4o + Vector Store<br/>Pay-per-use]
+
         end
         
         subgraph "Storage ($3-8)"
@@ -120,6 +128,7 @@ graph LR
     end
     
     CJ2 --> TOTAL
+
     AOI2 --> TOTAL
     KV2 --> TOTAL
     ACR2 --> TOTAL
@@ -219,8 +228,9 @@ flowchart TD
 ```bash
 # Clone and deploy Container Apps Jobs
 git clone <repository-url>
-cd jasmin-catering-ai-agent
+
 ./scripts/deployment/deploy-container-jobs.sh
+
 ```
 
 ### Management Commands
@@ -376,6 +386,7 @@ jasmin-catering-ai-agent/
 ├── 📄 requirements.txt                 # Python dependencies
 ├── 📄 CLAUDE.md                        # AI development guide
 └── 📄 README.md                        # Project documentation
+
 ```
 
 ## 🚀 Deployment
