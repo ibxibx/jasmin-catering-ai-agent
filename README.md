@@ -609,6 +609,173 @@ python scripts/check-email-processing.py
 # - Provides alternative monitoring methods
 ```
 
+## 📚 Complete Scripts Documentation
+
+### 🚀 Deployment Scripts (`scripts/deployment/`)
+
+#### Main Container Apps Deployment
+```bash
+./scripts/deployment/deploy-container-jobs.sh
+```
+Deploys the complete Jasmin Catering AI system as Azure Container Apps Jobs with:
+- Scheduled cron job (every 5 minutes)
+- Docker image building and pushing to ACR
+- Environment variable configuration from Key Vault
+- Scale-to-zero configuration
+
+#### Alternative Azure Deployment
+```bash
+./scripts/deployment/deploy-to-azure.sh
+```
+Alternative deployment script for Azure Container Apps with:
+- Container App creation (not Jobs)
+- HTTP ingress configuration
+- Manual trigger endpoints
+
+#### AI Foundry Deployment
+```bash
+./scripts/deployment/deploy-with-ai-foundry.sh
+```
+Specialized deployment for Azure AI Foundry integration:
+- AI Hub and Project setup
+- Assistant and Vector Store configuration
+- Knowledge document upload
+
+### 🧪 Testing Scripts (`scripts/testing/`)
+
+#### Test Enhanced RAG System
+```bash
+python scripts/testing/test-enhanced-rag-system.py
+```
+Comprehensive testing of the AI Assistant with Vector Store:
+- Verifies assistant configuration
+- Tests knowledge retrieval
+- Validates response quality
+- Generates test results JSON
+
+#### Send Test Emails
+```bash
+python scripts/testing/send_test_emails.py
+```
+Sends diverse test catering inquiries:
+- Multiple event types and sizes
+- German language emails
+- Various dietary requirements
+- Edge case testing
+
+### 🛠️ Utility Scripts (`scripts/utilities/`)
+
+#### Document Indexer
+```bash
+python scripts/utilities/document-indexer.py
+```
+Indexes knowledge documents for Azure AI Search:
+- Uploads business documents
+- Creates search indices
+- Manages document versions
+
+#### Upload Files to Vector Store
+```bash
+python scripts/utilities/upload-files-rest-api.py
+```
+Direct REST API upload to OpenAI Vector Store:
+- Batch file upload
+- Progress tracking
+- Error handling
+
+#### Verify Knowledge Upload
+```bash
+python scripts/utilities/verify-knowledge-upload.py
+```
+Confirms successful knowledge base upload:
+- Lists all files in vector store
+- Validates file integrity
+- Reports upload status
+
+#### Check Vector Store Direct
+```bash
+python scripts/utilities/check-vectorstore-direct.py
+```
+Direct API access to vector store:
+- Lists files and metadata
+- Debugging tool for RAG issues
+
+#### Update Container Job Config
+```bash
+./scripts/utilities/update-container-job-config.sh
+```
+Updates Container Apps Job configuration:
+- Environment variables
+- Schedule modifications
+- Resource adjustments
+
+### 🔄 Processing Scripts (`scripts/`)
+
+#### Load Environment Configuration
+```bash
+source scripts/load-env-config.sh
+```
+Loads .env file and sets default Azure configurations:
+- Used by all deployment scripts
+- Sets Sweden Central as default region
+- Validates required variables
+
+#### Monitor Real Emails
+```bash
+python scripts/monitor-real-emails.py
+```
+Real-time email monitoring:
+- Connects via IMAP
+- Watches for new emails
+- Processes in real-time
+
+#### Process All Emails
+```bash
+python scripts/process-all-emails.py
+```
+Batch email processing:
+- Processes inbox backlog
+- Handles multiple emails
+- Generates responses
+
+#### Send Catering Emails
+```bash
+python scripts/send-catering-emails.py
+```
+Sends generated catering offers:
+- SMTP email delivery
+- Professional formatting
+- Error handling
+
+#### Get Slack Channel IDs
+```bash
+python scripts/slack-get-channel-ids.py
+```
+Retrieves Slack workspace information:
+- Lists all channels
+- Gets channel IDs for configuration
+- Verifies bot permissions
+
+### 📦 Archive Scripts (`scripts/archive/`)
+Legacy scripts preserved for reference but no longer used in production. Includes old Logic Apps scripts, initial AI agent implementations, and deprecated cleanup utilities.
+
+## 📖 Documentation Links
+
+### Architecture & Design
+- [System Architecture](docs/diagrams/system-architecture.md) - Complete system design with diagrams
+- [Sequential Workflow](docs/diagrams/sequential-workflow.md) - Step-by-step process flow
+- [Project Structure](docs/PROJECT-STRUCTURE.md) - Detailed codebase organization
+
+### Implementation Guides
+- [Enhanced RAG System](docs/enhanced-rag-system.md) - Vector Store RAG implementation
+- [Azure AI Agent Deployment](docs/azure-ai-agent-deployment.md) - AI deployment guide
+- [Claude Development Guide](CLAUDE.md) - AI-assisted development instructions
+
+### Status & Operations
+- [Project Status](docs/PROJECT_STATUS.md) - Current deployment status
+- [Cleanup Summary](docs/CLEANUP-SUMMARY.md) - Resource management guide
+- [Knowledge Upload Success](docs/KNOWLEDGE-UPLOAD-SUCCESS.md) - Vector store upload results
+
 ## 🔧 Troubleshooting
 
 ### Common Issues & Solutions
