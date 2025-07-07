@@ -110,52 +110,12 @@ else
             AZURE_KEY_VAULT_NAME="$KEY_VAULT_NAME"
 fi
 
-# Create timer-based execution using Azure Logic Apps
-echo "7. Setting up scheduled execution..."
-cat > logic_app_definition.json << EOF
-{
-    "definition": {
-        "\$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        "contentVersion": "1.0.0.0",
-        "parameters": {},
-        "triggers": {
-            "Recurrence": {
-                "recurrence": {
-                    "frequency": "Minute",
-                    "interval": 5
-                },
-                "type": "Recurrence"
-            }
-        },
-        "actions": {
-            "HTTP_Trigger_Container_App": {
-                "type": "Http",
-                "inputs": {
-                    "method": "POST",
-                    "uri": "https://$CONTAINER_APP_NAME.${LOCATION}.azurecontainerapps.io/trigger",
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "body": {
-                        "trigger": "scheduled_run"
-                    }
-                }
-            }
-        },
-        "outputs": {}
-    }
-}
-EOF
+# Note: For scheduled execution, use Container Apps Jobs with cron schedule
+echo "7. Container Apps Job can be created with cron schedule..."
+echo "   Use deploy-container-jobs.sh for scheduled job deployment"
 
-# Deploy Logic App for scheduling
-az logic workflow create \
-    --resource-group $RESOURCE_GROUP \
-    --name "jasmin-catering-scheduler" \
-    --location $LOCATION \
-    --definition @logic_app_definition.json
-
-# Clean up temp file
-rm logic_app_definition.json
+# Container Apps Jobs handle their own scheduling with cron
+# No additional scheduler needed
 
 echo ""
 echo "🎉 Deployment Complete!"
@@ -163,7 +123,7 @@ echo "======================="
 echo "✅ Container Registry: $ACR_NAME.azurecr.io"
 echo "✅ Container App: $CONTAINER_APP_NAME"
 echo "✅ Environment: $CONTAINER_APP_ENV"
-echo "✅ Scheduler: jasmin-catering-scheduler"
+echo "✅ Note: Use Container Apps Jobs for scheduling"
 echo ""
 echo "📊 Monitoring URLs:"
 echo "Container App: https://portal.azure.com/#@/resource/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$RESOURCE_GROUP/providers/Microsoft.App/containerApps/$CONTAINER_APP_NAME"

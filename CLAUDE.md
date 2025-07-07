@@ -57,15 +57,13 @@ cd deployments/scripts
 ./deploy-main.sh
 ```
 
-### Monitor Logic App
+### Monitor Container Apps Job
 ```bash
-./monitor-logic-app.sh
-```
+# Check recent executions
+az containerapp job execution list --name jasmin-email-processor --resource-group jasmin-catering-rg
 
-### Check Specific Run
-```bash
-az rest --method get \
-  --uri "https://management.azure.com/subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/logicapp-jasmin-sweden_group/providers/Microsoft.Logic/workflows/jasmin-order-processor-sweden/runs/[RUN_ID]?api-version=2019-05-01"
+# View logs for specific execution
+az containerapp job logs show --name jasmin-email-processor --resource-group jasmin-catering-rg
 ```
 
 ## ⚠️ Known Issues & Solutions
@@ -96,10 +94,10 @@ https://jasmin-catering-resource.cognitiveservices.azure.com/openai/deployments/
    - Uses AI Services infrastructure
    - Direct GPT-4 access via OpenAI API
 
-2. **Logic Apps Consumption tier**
-   - Simple email processing
-   - Cost-effective
-   - Easy deployment
+2. **Container Apps Jobs**
+   - Scheduled job execution (cron)
+   - Scale-to-zero cost optimization
+   - Easy deployment and monitoring
 
 3. **Sweden Central region**
    - West Europe restrictions
@@ -114,7 +112,7 @@ https://jasmin-catering-resource.cognitiveservices.azure.com/openai/deployments/
 ## 📊 Current Workflow
 
 ```
-Timer (5 min) → Simulate Emails → Filter (TO: ma3u-test@email.de) → AI Processing → Generate Offer → Store Draft
+Container Apps Job (5 min cron) → Fetch Emails → Filter (TO: ma3u-test@email.de) → AI Processing → Generate Offer → Send Response
 ```
 
 ## 💡 Key Commands
