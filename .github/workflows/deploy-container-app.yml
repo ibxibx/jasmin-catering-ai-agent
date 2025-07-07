@@ -1,0 +1,94 @@
+name: Deploy Jasmin Catering AI Container App
+
+on:
+  push:
+    branches: [ main, fix/container-apps-email-processing ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY_NAME: jasmincateringregistry
+  RESOURCE_GROUP: logicapp-jasmin-sweden_group
+  CONTAINER_APP_JOB: jasmin-email-processor
+  REGION: swedencentral
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Log in to Azure Container Registry
+      run: az acr login --name ${{ env.REGISTRY_NAME }}
+
+    - name: Set image tag
+      id: image-tag
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          TAG="pr-${{ github.event.number }}-$(date +%Y%m%d-%H%M)"
+        else
+          TAG="main-$(date +%Y%m%d-%H%M)"
+        fi
+        echo "IMAGE_TAG=$TAG" >> $GITHUB_OUTPUT
+        echo "Full image: ${{ env.REGISTRY_NAME }}.azurecr.io/jasmin-catering-ai:$TAG"
+
+    - name: Build and push container image
+      run: |
+        IMAGE_NAME="${{ env.REGISTRY_NAME }}.azurecr.io/jasmin-catering-ai:${{ steps.image-tag.outputs.IMAGE_TAG }}"
+        echo "Building image: $IMAGE_NAME"
+        
+        az acr build \
+          --registry ${{ env.REGISTRY_NAME }} \
+          --image jasmin-catering-ai:${{ steps.image-tag.outputs.IMAGE_TAG }} \
+          --file Dockerfile \
+          .
+
+    - name: Deploy to Container Apps Job (main branch only)
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        IMAGE_NAME="${{ env.REGISTRY_NAME }}.azurecr.io/jasmin-catering-ai:${{ steps.image-tag.outputs.IMAGE_TAG }}"
+        echo "Deploying image: $IMAGE_NAME"
+        
+        # Update Container Apps Job with new image
+        az containerapp job update \
+          --name ${{ env.CONTAINER_APP_JOB }} \
+          --resource-group ${{ env.RESOURCE_GROUP }} \
+          --image "$IMAGE_NAME"
+        
+        echo "✅ Container Apps Job updated successfully"
+
+    - name: Trigger test execution (main branch only)
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        echo "🚀 Triggering test execution..."
+        EXECUTION=$(az containerapp job start \
+          --name ${{ env.CONTAINER_APP_JOB }} \
+          --resource-group ${{ env.RESOURCE_GROUP }} \
+          --query "name" -o tsv)
+        
+        echo "Started execution: $EXECUTION"
+        echo "Monitor logs with: az containerapp job logs show --name ${{ env.CONTAINER_APP_JOB }} --resource-group ${{ env.RESOURCE_GROUP }} --container jasmin-email-processor"
+
+    - name: Output deployment summary
+      run: |
+        echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Image**: ${{ env.REGISTRY_NAME }}.azurecr.io/jasmin-catering-ai:${{ steps.image-tag.outputs.IMAGE_TAG }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Resource Group**: ${{ env.RESOURCE_GROUP }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Container Apps Job**: ${{ env.CONTAINER_APP_JOB }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Region**: ${{ env.REGION }}" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ github.ref }}" = "refs/heads/main" ] && [ "${{ github.event_name }}" = "push" ]; then
+          echo "- **Status**: ✅ Deployed and test execution triggered" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- **Status**: 🔨 Built only (not deployed - not main branch)" >> $GITHUB_STEP_SUMMARY
+        fi
