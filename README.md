@@ -766,15 +766,20 @@ Legacy scripts preserved for reference but no longer used in production. Include
 - [Sequential Workflow](docs/diagrams/sequential-workflow.md) - Step-by-step process flow
 - [Project Structure](docs/PROJECT-STRUCTURE.md) - Detailed codebase organization
 
+### Business & Requirements
+- [Project Overview (DE/EN)](docs/README.IAN.md) - Original project requirements and scope
+- [Pricing Explanation](docs/PRICING_EXPLANATION.md) - Catering pricing calculation logic
+
 ### Implementation Guides
 - [Enhanced RAG System](docs/enhanced-rag-system.md) - Vector Store RAG implementation
 - [Azure AI Agent Deployment](docs/azure-ai-agent-deployment.md) - AI deployment guide
+- [Slack Setup Guide](docs/SLACK_SETUP_GUIDE.md) - Slack integration configuration
 - [Claude Development Guide](CLAUDE.md) - AI-assisted development instructions
 
-### Status & Operations
+### Operations & History
 - [Project Status](docs/PROJECT_STATUS.md) - Current deployment status
 - [Cleanup Summary](docs/CLEANUP-SUMMARY.md) - Resource management guide
-- [Knowledge Upload Success](docs/KNOWLEDGE-UPLOAD-SUCCESS.md) - Vector store upload results
+- [Restructure Summary](docs/RESTRUCTURE_SUMMARY.md) - Project restructuring history
 
 ## 🔧 Troubleshooting
 
