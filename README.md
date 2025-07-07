@@ -488,19 +488,32 @@ on:
 **Pipeline Features:**
 - ✅ **Automated Container Build**: Builds Docker image on every push
 - ✅ **Azure Container Registry Push**: Automatically pushes to `jasmincateringregistry.azurecr.io`
-- ✅ **Container Apps Job Update**: Deploys to production on main branch
-- ✅ **Test Execution**: Automatically triggers job execution after deployment
+- ⚠️ **Container Apps Job Update**: **PAUSED** - Missing AZURE_CREDENTIALS
+- ⚠️ **Test Execution**: **PAUSED** - Requires Azure Service Principal
 - ✅ **PR Support**: Builds containers for pull requests without deploying
 
-**Required GitHub Secrets:**
+**GitHub Secrets Status:**
 ```bash
-# In GitHub repository settings > Secrets and variables > Actions
-AZURE_CREDENTIALS = '{
-  "clientId": "your-service-principal-id",
-  "clientSecret": "your-service-principal-secret", 
-  "subscriptionId": "your-subscription-id",
-  "tenantId": "your-tenant-id"
-}'
+# ✅ Added (6/7 secrets configured)
+FROM_EMAIL_ADDRESS         ✅ Configured
+WEBDE_APP_PASSWORD         ✅ Configured  
+AZURE_SUBSCRIPTION_ID      ✅ Configured
+AZURE_TENANT_ID           ✅ Configured
+AZURE_AI_ENDPOINT         ✅ Configured
+AZURE_AI_API_KEY          ✅ Configured
+
+# ❌ Missing (requires admin privileges)
+AZURE_CREDENTIALS         ❌ MISSING - Service Principal required
+```
+
+**AZURE_CREDENTIALS Format** (when created by admin):
+```json
+{
+  "clientId": "service-principal-client-id",
+  "clientSecret": "service-principal-client-secret", 
+  "subscriptionId": "6576090b-36b2-4ba1-94ae-d2f52eed2789",
+  "tenantId": "b4b6ea88-f8b8-4539-a42d-b5e46434242b"
+}
 ```
 
 **Deployment Workflow:**
@@ -917,6 +930,42 @@ scale:
 2. **Optimized Scheduling**: Reduce trigger frequency during low activity
 3. **AI Token Management**: Efficient prompt engineering reduces costs
 4. **Container Optimization**: Minimal base image reduces storage costs
+
+---
+
+## 📋 TODO - CI/CD Setup Required
+
+### ⚠️ **URGENT: Azure Service Principal Setup**
+
+**Issue**: CI/CD pipeline is currently **PAUSED** due to missing Azure credentials.
+
+**Problem**: 
+```bash
+az ad sp create-for-rbac --name "jasmin-github-actions" --role contributor --scopes "/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789" --sdk-auth
+ERROR: Insufficient privileges to complete the operation.
+```
+
+**Required Action**:
+1. **Contact Azure Administrator** to create Service Principal with these details:
+   - **Name**: `jasmin-github-actions`
+   - **Role**: `contributor` 
+   - **Scope**: `/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789`
+   - **Output**: JSON format for GitHub secret
+
+2. **Add GitHub Secret**:
+   - Go to: https://github.com/ma3u/jasmin-catering-ai-agent/settings/secrets/actions
+   - Create secret: `AZURE_CREDENTIALS`
+   - Value: JSON output from Service Principal creation
+
+3. **Resume CI/CD**: Once added, GitHub Actions will automatically deploy on commits to main
+
+**Current Status**: 
+- ✅ GitHub Actions workflow created
+- ✅ 6/7 required secrets added to GitHub
+- ❌ Missing `AZURE_CREDENTIALS` (requires admin privileges)
+- ⚠️ **Deployment and testing steps are PAUSED**
+
+**Reference**: See `scripts/utilities/GITHUB_SECRETS_SETUP.md` for detailed instructions.
 
 ---
 
