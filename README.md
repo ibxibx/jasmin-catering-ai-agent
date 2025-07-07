@@ -197,34 +197,44 @@ slack-channel-emailrequestsandresponse  # Channel ID for email notifications
 slack-channel-jasminlogs                # Channel ID for system logs
 ```
 
-## ⚠️ CI/CD Setup Required
+## ⚠️ CI/CD Setup Options
 
-### **URGENT: Azure Service Principal Setup**
+### **Option 1: GitHub Actions (Requires Admin Privileges)**
 
-**Issue**: CI/CD pipeline is currently **PAUSED** due to missing Azure credentials.
+**Issue**: GitHub Actions CI/CD requires Azure Service Principal creation with admin privileges.
 
 **Problem**: 
 ```bash
-az ad sp create-for-rbac --name "jasmin-github-actions" --role contributor --scopes "/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789" --sdk-auth
+az ad sp create-for-rbac --name "jasmin-github-actions" --role contributor --scopes "/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789"
 ERROR: Insufficient privileges to complete the operation.
 ```
 
-**Required Action**:
-1. **Contact Azure Administrator** to create Service Principal:
-   - **Name**: `jasmin-github-actions`
-   - **Role**: `contributor` 
-   - **Scope**: `/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789`
+**Alternative Solutions**:
+1. **Federated Identity** (Lower privileges) - See `scripts/utilities/setup-federated-identity.md`
+2. **Contact Azure Admin** for Service Principal creation
+3. **Use Local CI/CD** (immediate solution below)
 
-2. **Add GitHub Secret**:
-   - Go to: https://github.com/ma3u/jasmin-catering-ai-agent/settings/secrets/actions
-   - Create secret: `AZURE_CREDENTIALS`
-   - Value: JSON output from Service Principal creation
+### **Option 2: Local CI/CD Script (Immediate Solution)**
+
+**No admin privileges required!** Use the local deployment script:
+
+```bash
+# One-command local CI/CD
+./scripts/deployment/local-cicd.sh
+```
+
+This script performs the same actions as GitHub Actions:
+- ✅ Builds Docker image
+- ✅ Pushes to Azure Container Registry  
+- ✅ Updates Container Apps Job
+- ✅ Triggers test execution
+- ✅ Shows deployment logs
 
 **Current Status**: 
-- ✅ GitHub Actions workflow created
+- ✅ GitHub Actions workflow created (paused)
 - ✅ 6/7 required secrets added to GitHub
-- ❌ Missing `AZURE_CREDENTIALS` (requires admin privileges)
-- ⚠️ **Deployment and testing steps are PAUSED**
+- ✅ **Local CI/CD script ready** (immediate alternative)
+- ⚠️ GitHub Actions paused until admin creates Service Principal
 
 ## 🚀 Deployment & CI/CD
 
@@ -257,6 +267,12 @@ AZURE_AI_API_KEY          ✅ Configured
 
 # ❌ Missing (requires admin privileges)
 AZURE_CREDENTIALS         ❌ MISSING - Service Principal required
+```
+
+### Local CI/CD Deployment (Recommended)
+```bash
+# Automated local deployment (no admin privileges needed)
+./scripts/deployment/local-cicd.sh
 ```
 
 ### Manual Deployment
