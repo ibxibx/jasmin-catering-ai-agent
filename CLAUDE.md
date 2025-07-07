@@ -170,7 +170,7 @@ az logic workflow show \
 
 - `scripts/deployment/deploy-container-jobs.sh` - Container Apps deployment
 - `scripts/deployment/deploy-to-azure.sh` - Azure deployment script
-- `deployments/scripts/load-env-config.sh` - Environment configuration
+- `scripts/load-env-config.sh` - Environment configuration
 - `.env` - All secrets (never commit!)
 
 Remember: The goal is full automation with zero manual Azure Portal steps!
