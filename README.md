@@ -5,33 +5,19 @@ An intelligent, cloud-native email processing system powered by **Azure OpenAI A
 ## 📋 Table of Contents
 
 - [🏗️ System Architecture](#️-system-architecture)
-  - [Cloud Architecture](#cloud-architecture)
-  - [Email Processing Workflow](#email-processing-workflow)
-  - [Cost-Effective Architecture](#cost-effective-architecture)
-  - [Deployment Pipeline](#deployment-pipeline)
-- [🤖 Azure AI Foundry Assistants](#-azure-ai-foundry-assistants)
+- [🤖 Azure AI Assistant & Vector Store](#-azure-ai-assistant--vector-store)
 - [🚀 Quick Start](#-quick-start)
 - [🏢 Azure Resources](#-azure-resources)
-  - [Resource Group](#resource-group-jasmin-catering-rg)
-  - [Key Vault Secrets](#key-vault-secrets)
-  - [Local Development Secrets Backup](#local-development-secrets-backup)
-- [🔐 Security Configuration](#-security-configuration)
-- [📊 Monitoring & Observability](#-monitoring--observability)
-- [🔧 Development](#-development)
-- [🚀 Deployment](#-deployment)
+- [⚠️ CI/CD Setup Required](#️-cicd-setup-required)
+- [🚀 Deployment & CI/CD](#-deployment--cicd)
 - [🧪 Testing](#-testing)
-  - [Test Scripts & Utilities](#test-scripts--utilities)
-- [🔧 Troubleshooting](#-troubleshooting)
-- [📈 Scaling & Performance](#-scaling--performance)
+- [🔧 Development](#-development)
+- [📊 Monitoring](#-monitoring)
 - [🎯 Project Status](#-project-status)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
 
 ## 🏗️ System Architecture
 
-For comprehensive architectural details, see our [detailed diagrams](docs/diagrams/):
-- 📊 [Complete System Architecture](docs/diagrams/system-architecture.md)
-- 🔄 [Sequential Workflow](docs/diagrams/sequential-workflow.md)
+### Cloud Architecture Overview
 
 ```mermaid
 graph TB
@@ -41,9 +27,8 @@ graph TB
         end
         
         subgraph "AI Services"
-            AOI[Azure OpenAI Assistant<br/>GPT-4.1 Model<br/>Vector Store RAG]
-            VS[Vector Store<br/>AssistantVectorStore_Jasmin<br/>6 Knowledge Documents]
-
+            AOI[Azure OpenAI Assistant<br/>GPT-4o Model<br/>Vector Store RAG]
+            VS[Vector Store<br/>vs_xDbEaqnBNUtJ70P7GoNgY1qD<br/>6 Knowledge Documents]
         end
         
         subgraph "Storage & Security"
@@ -59,7 +44,6 @@ graph TB
     end
     
     %% Workflow Connections
-
     CJ -->|Fetch Emails| EMAIL
     CJ -->|AI Processing| AOI
     AOI -->|Search Knowledge| VS
@@ -69,9 +53,6 @@ graph TB
     CJ -->|Post Updates| SLACK
     CUSTOMER -->|Send Inquiry| EMAIL
     EMAIL -->|Auto Response| CUSTOMER
-    
-    %% Deployment Connections
-
     ACR -.->|Pull Image| CJ
     
     %% Styling
@@ -79,13 +60,12 @@ graph TB
     classDef external fill:#28a745,stroke:#1e7e34,stroke-width:2px,color:#fff
     classDef storage fill:#6f42c1,stroke:#563d7c,stroke-width:2px,color:#fff
     
-
     class CJ,AOI,VS azure
     class EMAIL,SLACK,CUSTOMER external
     class KV,ACR storage
 ```
 
-## 🔄 Email Processing Workflow
+### Email Processing Workflow
 
 ```mermaid
 sequenceDiagram
@@ -94,19 +74,13 @@ sequenceDiagram
     participant AI as Azure OpenAI Assistant
     participant VS as Vector Store
     participant S as Slack
-    participant KV as Key Vault
     participant CU as Customer
     
-
     Note over CJ: Cron: Every 5 minutes
-    CJ->>KV: Retrieve secrets
-    KV-->>CJ: Email & API credentials
-    
     CJ->>E: Fetch catering emails (IMAP)
     E-->>CJ: Email list
     
     loop For each email
-        Note over CJ: Email Processing
         CJ->>S: Post email to #requests channel
         
         Note over CJ: AI Assistant with RAG
@@ -124,139 +98,35 @@ sequenceDiagram
     
     CJ->>S: Post processing summary
     Note over CJ: Scale to zero
-
 ```
 
-## 💰 Cost-Effective Cloud Architecture
+### Cost-Effective Architecture
 
-```mermaid
-graph LR
-    subgraph "Monthly Costs"
+| Service | Monthly Cost | Purpose |
+|---------|-------------|---------|
+| **Container Apps Jobs** | $2-8 | Scheduled email processing (scale-to-zero) |
+| **Azure OpenAI** | $50-80 | GPT-4o Assistant + Vector Store RAG |
+| **Container Registry** | $5 | Docker image storage |
+| **Key Vault** | $3 | Secret management |
+| **Total** | **$60-96** | 48% cost reduction vs previous setup |
 
-        subgraph "Compute ($2-8)"
-            CJ2[Container Apps Jobs<br/>Scale-to-Zero<br/>Cron Schedule]
-        end
-        
-        subgraph "AI Services ($50-80)"
-            AOI2[Azure OpenAI Assistant<br/>GPT-4o + Vector Store<br/>Pay-per-use]
-
-        end
-        
-        subgraph "Storage ($3-8)"
-            KV2[Key Vault<br/>Secret operations]
-            ACR2[Container Registry<br/>Image storage]
-        end
-    end
-    
-    subgraph "Total: $55-96/month"
-        TOTAL[Previous Setup: $115-145<br/>Enhanced RAG: $55-96<br/>Savings: 48% reduction]
-    end
-    
-    CJ2 --> TOTAL
-
-    AOI2 --> TOTAL
-    KV2 --> TOTAL
-    ACR2 --> TOTAL
-    
-    classDef cost fill:#28a745,stroke:#1e7e34,stroke-width:2px,color:#fff
-    classDef compute fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff
-    classDef ai fill:#ff6b35,stroke:#d63031,stroke-width:2px,color:#fff
-    classDef storage fill:#6f42c1,stroke:#563d7c,stroke-width:2px,color:#fff
-    
-    class TOTAL cost
-    class CJ2 compute
-    class AOI2 ai
-    class KV2,ACR2 storage
-```
-
-## 🚀 Deployment Architecture
-
-```mermaid
-flowchart TD
-    subgraph "Development"
-        DEV[Local Development<br/>Python + Docker<br/>main.py]
-        BUILD[Docker Build<br/>Containerization]
-    end
-    
-    subgraph "CI/CD Pipeline"
-        PUSH[Push to ACR<br/>jasmincateringregistry.azurecr.io]
-        DEPLOY[Deploy to Container Apps<br/>jasmin-catering-app]
-    end
-    
-    subgraph "Azure Cloud Production"
-        subgraph "Container Apps Environment"
-            APP[Jasmin AI Agent<br/>HTTP Endpoints<br/>Auto-scaling]
-        end
-        
-        subgraph "Scheduling"
-            SCHEDULE[Logic App Scheduler<br/>jasmin-catering-scheduler<br/>Every 5 minutes]
-        end
-        
-        subgraph "Monitoring"
-            LOGS[Application Insights<br/>Container Logs<br/>Performance Metrics]
-            HEALTH[Health Checks<br/>/health endpoint<br/>Availability monitoring]
-        end
-    end
-    
-    subgraph "External Integrations"
-        API1[Slack API<br/>Real-time notifications]
-        API2[Email Services<br/>IMAP/SMTP processing]
-        API3[Azure OpenAI<br/>GPT-4o responses]
-    end
-    
-    DEV --> BUILD
-    BUILD --> PUSH
-    PUSH --> DEPLOY
-    DEPLOY --> APP
-    
-    SCHEDULE -->|HTTP Trigger| APP
-    APP --> LOGS
-    APP --> HEALTH
-    
-    APP <--> API1
-    APP <--> API2
-    APP <--> API3
-    
-    classDef dev fill:#ffeaa7,stroke:#fdcb6e,stroke-width:2px,color:#2d3436
-    classDef cicd fill:#74b9ff,stroke:#0984e3,stroke-width:2px,color:#fff
-    classDef prod fill:#00b894,stroke:#00a085,stroke-width:2px,color:#fff
-    classDef monitor fill:#e17055,stroke:#d63031,stroke-width:2px,color:#fff
-    classDef external fill:#a29bfe,stroke:#6c5ce7,stroke-width:2px,color:#fff
-    
-    class DEV,BUILD dev
-    class PUSH,DEPLOY cicd
-    class APP,SCHEDULE prod
-    class LOGS,HEALTH monitor
-    class API1,API2,API3 external
-```
-
-## 🤖 Azure AI Foundry Assistants
+## 🤖 Azure AI Assistant & Vector Store
 
 ![AI Assistant Demo](pictures/AIAssistent2.gif)
 
-The system leverages Azure AI Foundry's powerful Assistant capabilities with Vector Store RAG for intelligent email processing and response generation. The assistant has access to 6 comprehensive knowledge documents about Jasmin Catering's services, pricing, and policies, enabling it to provide accurate and contextual responses to customer inquiries.
-
-### Key Features:
-- **Vector Store RAG**: Semantic search through business knowledge documents
-- **GPT-4o Model**: Advanced language understanding and generation
-- **File Search Tool**: Ability to search and retrieve relevant information
-- **German Language Support**: Native German responses for local customers
-- **Context-Aware Responses**: Personalized offers based on event requirements
-
-## 📚 Knowledge Base & Vector Store
-
-### **Vector Store Configuration**
-- **Vector Store ID**: `vs_xDbEaqnBNUtJ70P7GoNgY1qD`
-- **Name**: AssistantVectorStore_Jasmin
+### Current Production Configuration
 - **Assistant ID**: `asst_UHTUDffJEyLQ6qexElqOopac`
-- **Status**: ✅ Active with 6 knowledge documents uploaded
+- **Model**: GPT-4o
+- **Vector Store ID**: `vs_xDbEaqnBNUtJ70P7GoNgY1qD`
+- **Knowledge Documents**: 6 files uploaded ✅
+- **RAG Tool**: `file_search` enabled
 
-### **Knowledge Documents** (`deployments/documents/`)
+### Vector Store Knowledge Base
 
-All 6 knowledge files have been uploaded to the Azure OpenAI Vector Store for RAG processing:
+All knowledge files in `deployments/documents/` are uploaded to the Azure OpenAI Vector Store:
 
-| File | Purpose | Vector Store Status | File ID |
-|------|---------|-------------------|---------|
+| File | Purpose | Status | File ID |
+|------|---------|--------|---------|
 | `business-conditions.md` | Terms, pricing, cancellation policies | ✅ Uploaded | `assistant-JoXkWRSQF1Vhryin7TizgX` |
 | `catering-brief.md` | Business process & system requirements | ✅ Uploaded | `assistant-BFjrHArDvusxRUr3rJkF3f` |
 | `email-template.md` | Professional communication standards | ✅ Uploaded | `assistant-JFhmqteJ7ADMT1kr94RN8j` |
@@ -264,28 +134,12 @@ All 6 knowledge files have been uploaded to the Azure OpenAI Vector Store for RA
 | `response-examples.md` | Professional response examples | ✅ Uploaded | `assistant-W65tS9JgAPCra86jNmh2wY` |
 | `vegetarian-offer-template.md` | Vegetarian menu offerings | ✅ Uploaded | `assistant-X3MxAxuGEeQnm7rEJq2z3Q` |
 
-### **Upload Process**
-The knowledge documents were uploaded using the Azure OpenAI REST API:
-
-```bash
-# Upload knowledge files to Vector Store
-python scripts/utilities/upload-files-rest-api.py
-
-# Verify upload status
-python scripts/utilities/verify-knowledge-upload.py
-```
-
-**Note**: The OpenAI Python SDK doesn't yet support Vector Store operations in Azure OpenAI, so direct REST API calls are used for file management.
-
-### **RAG Integration**
-The AI Assistant uses the `file_search` tool to perform semantic search across all uploaded documents, enabling:
-- **Contextual Responses**: Finds relevant business information for each inquiry
-- **Accurate Pricing**: References current pricing structure and packages
-- **Policy Compliance**: Ensures responses follow business terms and conditions
-- **Professional Quality**: Uses approved templates and response examples
-
-### 📊 Development Journey
-Check out our presentation: [**From Zero to Hero: AI-Powered Development**](https://gamma.app/docs/From-Zero-to-Hero-AI-Powered-Development-zf0bapu4b31bn5h) - showcasing how we built this system using AI-assisted development with Claude.
+### RAG Capabilities
+- **Semantic Search**: Vector-based search through business knowledge
+- **Contextual Responses**: Finds relevant information for each inquiry
+- **German Language**: Native German responses for local customers
+- **Policy Compliance**: Ensures responses follow business terms
+- **Professional Quality**: Uses approved templates and examples
 
 ## 🚀 Quick Start
 
@@ -296,7 +150,6 @@ Check out our presentation: [**From Zero to Hero: AI-Powered Development**](http
 
 ### One-Command Deployment
 ```bash
-# Clone and deploy Container Apps Jobs
 git clone https://github.com/ma3u/jasmin-catering-ai-agent.git
 cd jasmin-catering-ai-agent
 ./scripts/deployment/deploy-container-jobs.sh
@@ -305,238 +158,94 @@ cd jasmin-catering-ai-agent
 ### Management Commands
 ```bash
 # Manual trigger
-az containerapp job start --name jasmin-email-processor --resource-group jasmin-catering-rg
+az containerapp job start --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
 
 # Check execution status
-az containerapp job execution list --name jasmin-email-processor --resource-group jasmin-catering-rg
+az containerapp job execution list --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
 
 # View logs
-az containerapp job logs show --name jasmin-email-processor --resource-group jasmin-catering-rg --container jasmin-email-processor
-
-# Test AI Assistant locally
-python -c "from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI; print(JasminAIAssistantOpenAI().get_assistant_info())"
+az containerapp job logs show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --container jasmin-email-processor
 ```
-
-### Production Deployment Status
-**🎉 Enhanced RAG System Deployed & Operational**
-- **AI Assistant**: `asst_UHTUDffJEyLQ6qexElqOopac` (Azure OpenAI)
-- **Vector Store**: `vs_xDbEaqnBNUtJ70P7GoNgY1qD` (6 knowledge documents)
-- **Container Apps Job**: `jasmin-email-processor` 
-- **Schedule**: Every 5 minutes (cron: `*/5 * * * *`)
-- **Location**: Azure Sweden Central
-- **Enhanced Features**: Vector Store RAG, Semantic Search, File Search Tool
 
 ## 🏢 Azure Resources
 
-### Resource Group: `jasmin-catering-rg`
-**Location**: Sweden Central | **Purpose**: Container for all project resources
+### Resource Group: `logicapp-jasmin-sweden_group`
+**Location**: Sweden Central
 
-| Service | Name | SKU | Purpose | Monthly Cost |
-|---------|------|-----|---------|--------------|
-| **Container Apps Jobs** | `jasmin-email-processor` | Consumption | Scheduled email processing | $2-8 |
-| **Container Registry** | `jasmincateringregistry` | Basic | Docker image storage | $5 |
-| **Azure OpenAI** | `jasmin-openai-372bb9` | Standard | GPT-4o Assistant + Vector Store | $50-80 |
-| **Key Vault** | `jasmin-catering-kv` | Standard | Secret management | $3 |
+| Service | Name | Purpose |
+|---------|------|---------|
+| **Container Apps Jobs** | `jasmin-email-processor` | Scheduled email processing |
+| **Container Registry** | `jasmincateringregistry` | Docker image storage |
+| **Azure OpenAI** | `jasmin-openai-372bb9` | GPT-4o Assistant + Vector Store |
+| **Key Vault** | `jasmin-catering-kv` | Secret management |
 
-
-![Azure Deployments](/pictures/azuredeployment.png)
-
-**Total Monthly Cost**: $60-96 (vs $115-145 previous setup)
-**Cost Optimization**: 48% reduction with enhanced AI Assistant + Vector Store RAG
+![Azure Deployments](pictures/azuredeployment.png)
 
 ### Key Vault Secrets
+**Azure Key Vault**: `jasmin-catering-kv`
 
-**Azure Key Vault**: `jasmin-catering-kv` | **URI**: `https://jasmin-catering-kv.vault.azure.net/`
-
-All sensitive configuration is securely stored in Azure Key Vault. The following secrets are required:
-
+Required secrets for production:
 ```bash
-# Azure Configuration
 azure-subscription-id                   # Azure subscription identifier
 azure-tenant-id                         # Azure AD tenant ID
-
-# Email Configuration  
-from-email-address                      # Sender email (matthias.buchhorn@web.de)
-from-email-password                     # SMTP authentication password
+from-email-address                      # Sender email
 webde-app-password                      # Web.de app-specific password
-
-# OpenAI Configuration
 openai-api-key                          # Azure OpenAI API key
 openai-endpoint                         # Azure OpenAI endpoint URL
-
-# Slack Integration
 slack-bot-token                         # Slack bot OAuth token
 slack-channel-emailrequestsandresponse  # Channel ID for email notifications
 slack-channel-jasminlogs                # Channel ID for system logs
 ```
 
-**Access Secrets via Azure CLI:**
+## ⚠️ CI/CD Setup Required
+
+### **URGENT: Azure Service Principal Setup**
+
+**Issue**: CI/CD pipeline is currently **PAUSED** due to missing Azure credentials.
+
+**Problem**: 
 ```bash
-# List all secrets
-az keyvault secret list --vault-name jasmin-catering-kv
-
-# Get a specific secret value
-az keyvault secret show --vault-name jasmin-catering-kv --name openai-api-key --query value -o tsv
-
-# Set/Update a secret
-az keyvault secret set --vault-name jasmin-catering-kv --name secret-name --value "secret-value"
+az ad sp create-for-rbac --name "jasmin-github-actions" --role contributor --scopes "/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789" --sdk-auth
+ERROR: Insufficient privileges to complete the operation.
 ```
 
-### Local Development Secrets Backup
+**Required Action**:
+1. **Contact Azure Administrator** to create Service Principal:
+   - **Name**: `jasmin-github-actions`
+   - **Role**: `contributor` 
+   - **Scope**: `/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789`
 
-**1Password Vault**: `JasminCatering`
+2. **Add GitHub Secret**:
+   - Go to: https://github.com/ma3u/jasmin-catering-ai-agent/settings/secrets/actions
+   - Create secret: `AZURE_CREDENTIALS`
+   - Value: JSON output from Service Principal creation
 
-For secure local development, we use 1Password to manage `.env` files:
+**Current Status**: 
+- ✅ GitHub Actions workflow created
+- ✅ 6/7 required secrets added to GitHub
+- ❌ Missing `AZURE_CREDENTIALS` (requires admin privileges)
+- ⚠️ **Deployment and testing steps are PAUSED**
 
-```bash
-# Backup .env to 1Password
-./scripts/backup-env-to-1password.sh
+## 🚀 Deployment & CI/CD
 
-# This creates a timestamped backup in the JasminCatering vault
-# Example: jasmin-catering-env-2024-01-15_14-30-45
+### GitHub Actions CI/CD Pipeline
 
-# Restore .env from 1Password
-op document get 'jasmin-catering-env-YYYY-MM-DD_HH-MM-SS' --vault 'JasminCatering' > .env
-
-# List all backups
-op document list --vault 'JasminCatering' --tags 'env'
-```
-
-## 🔐 Security Configuration
-
-### Managed Identity & RBAC
-```bash
-# Container Apps Job uses managed identity for secure access
-az containerapp job identity assign --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg
-
-# Key Vault access policies
-az keyvault set-policy --name jasmin-catering-kv \
-  --object-id <managed-identity-id> \
-  --secret-permissions get list
-```
-
-### Network Security
-- **Container Apps**: Internal networking with controlled ingress
-- **Key Vault**: Network access restrictions enabled
-- **OpenAI**: VNet integration for production workloads
-
-### Secret Rotation
-```bash
-# Automated secret rotation strategy
-az keyvault secret set --vault-name jasmin-catering-kv \
-  --name webde-app-password --value <new-password> \
-  --expires <expiry-date>
-```
-
-## 📊 Monitoring & Observability
-
-### Application Insights Integration
-```bash
-# View real-time metrics
-az monitor app-insights component show \
-  --app jasmin-catering-insights \
-  --resource-group jasmin-catering-rg
-```
-
-### Slack Monitoring Channels
-- **#email-requests-and-response**: Customer inquiry notifications
-- **#jasmin-catering-logs**: System events and errors
-- **Real-time alerts**: Processing failures, API errors
-
-### Performance Metrics
-- **Email Processing Time**: 2-5 seconds average
-- **AI Response Generation**: 3-8 seconds average
-- **System Availability**: 99.9% SLA target
-- **Cost per Email**: ~$0.10-0.30
-
-## 🔧 Development
-
-### Local Development Environment
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment
-cp .env.example .env
-# Edit .env with your credentials
-
-# Run locally
-python main.py
-```
-
-### Docker Development
-```bash
-# Build container locally
-docker build -t jasmin-catering-ai .
-
-# Run container locally
-docker run -p 8000:8000 \
-  --env-file .env \
-  jasmin-catering-ai
-```
-
-### Project Structure
-```
-jasmin-catering-ai-agent/
-├── 📁 config/
-│   └── settings.py                     # Centralized configuration
-├── 📁 core/
-│   ├── email_processor.py              # IMAP/SMTP email handling
-│   ├── ai_assistant_openai_agent.py    # Azure OpenAI Assistant with Vector Store RAG
-│   └── slack_notifier.py               # Slack integration
-├── 📁 deployments/
-│   ├── documents/                      # 📚 Knowledge base files (uploaded to Vector Store)
-│   │   ├── business-conditions.md      # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
-│   │   ├── catering-brief.md           # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD  
-│   │   ├── email-template.md           # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
-│   │   ├── jasmin_catering_prompt.md   # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
-│   │   ├── response-examples.md        # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
-│   │   └── vegetarian-offer-template.md # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
-│   └── templates/                      # Configuration templates
-├── 📁 docs/
-│   ├── diagrams/                       # Architecture & workflow diagrams
-│   ├── azure-ai-agent-deployment.md   # AI deployment guide
-│   └── enhanced-rag-system.md         # RAG system documentation
-├── 📁 scripts/
-│   ├── deployment/                     # Azure deployment scripts
-│   ├── testing/                        # Test suites & results (organized from root)
-│   ├── utilities/                      # Helper scripts (GitHub secrets, document upload)
-│   └── archive/                        # Legacy/deprecated scripts
-├── 📄 main.py                          # Application entry point
-├── 📄 agent-config.json                # AI Assistant configuration
-├── 📄 Dockerfile                       # Container definition
-├── 📄 requirements.txt                 # Python dependencies
-├── 📄 CLAUDE.md                        # AI development guide
-└── 📄 README.md                        # Project documentation
-
-```
-
-## 🚀 Deployment
-
-### 🔄 CI/CD Pipeline with GitHub Actions
-
-**Automated build and deployment** triggered on every commit to `main` or `fix/container-apps-email-processing` branches:
+**Automated deployment** triggered on commits to `main`:
 
 ```yaml
-# .github/workflows/deploy-container-app.yml
 name: Deploy Jasmin Catering AI Container App
-
 on:
   push:
     branches: [ main, fix/container-apps-email-processing ]
-  pull_request:
-    branches: [ main ]
 ```
 
-**Pipeline Features:**
-- ✅ **Automated Container Build**: Builds Docker image on every push
-- ✅ **Azure Container Registry Push**: Automatically pushes to `jasmincateringregistry.azurecr.io`
-- ⚠️ **Container Apps Job Update**: **PAUSED** - Missing AZURE_CREDENTIALS
-- ⚠️ **Test Execution**: **PAUSED** - Requires Azure Service Principal
-- ✅ **PR Support**: Builds containers for pull requests without deploying
+**Pipeline Features**:
+- ✅ **Container Build**: Builds Docker image on every push
+- ✅ **Registry Push**: Pushes to `jasmincateringregistry.azurecr.io`
+- ⚠️ **Deployment**: **PAUSED** - Missing AZURE_CREDENTIALS
+- ⚠️ **Testing**: **PAUSED** - Requires Azure Service Principal
 
-**GitHub Secrets Status:**
+**GitHub Secrets Status**:
 ```bash
 # ✅ Added (6/7 secrets configured)
 FROM_EMAIL_ADDRESS         ✅ Configured
@@ -550,468 +259,104 @@ AZURE_AI_API_KEY          ✅ Configured
 AZURE_CREDENTIALS         ❌ MISSING - Service Principal required
 ```
 
-**AZURE_CREDENTIALS Format** (when created by admin):
-```json
-{
-  "clientId": "service-principal-client-id",
-  "clientSecret": "service-principal-client-secret", 
-  "subscriptionId": "6576090b-36b2-4ba1-94ae-d2f52eed2789",
-  "tenantId": "b4b6ea88-f8b8-4539-a42d-b5e46434242b"
-}
-```
-
-**Deployment Workflow:**
-```mermaid
-graph LR
-    A[Git Push] --> B[GitHub Actions]
-    B --> C[Build Docker Image]
-    C --> D[Push to ACR]
-    D --> E[Update Container Job]
-    E --> F[Trigger Test Execution]
-    F --> G[Monitor Logs]
-    
-    classDef cicd fill:#74b9ff,stroke:#0984e3,stroke-width:2px,color:#fff
-    class A,B,C,D,E,F,G cicd
-```
-
-### Manual Deployment Pipeline
+### Manual Deployment
 ```bash
-# Full deployment with monitoring
-./deploy-to-azure.sh
-
-# This script performs:
-# 1. Creates Azure Container Registry
-# 2. Builds and pushes Docker image  
-# 3. Creates Container Apps environment
-# 4. Deploys application with secrets
-# 5. Sets up Logic App scheduler
-# 6. Configures monitoring and alerts
-```
-
-### Environment-Specific Deployments
-```bash
-# Development environment
-az containerapp create --name jasmin-catering-dev \
-  --environment-variables "ENVIRONMENT=development"
-
-# Production environment  
-az containerapp create --name jasmin-catering-prod \
-  --environment-variables "ENVIRONMENT=production"
-```
-
-### Blue-Green Deployment
-```bash
-# Deploy new version alongside current
-az containerapp revision copy --name jasmin-catering-app \
-  --from-revision jasmin-catering-app--old-revision
-
-# Route traffic gradually
-az containerapp ingress traffic set --name jasmin-catering-app \
-  --revision-weight jasmin-catering-app--new-revision=50 \
-  --revision-weight jasmin-catering-app--old-revision=50
+# Build and deploy manually
+az acr build --registry jasmincateringregistry --image jasmin-catering-ai:latest .
+az containerapp job update --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --image "jasmincateringregistry.azurecr.io/jasmin-catering-ai:latest"
 ```
 
 ## 🧪 Testing
 
-### Local Testing
+### Automated Testing
+The CI/CD pipeline includes automated testing that:
+1. Sends test email to `ma3u-test@email.de`
+2. Triggers Container Apps Job execution
+3. Verifies email processing in logs
+4. Generates detailed test report
+
+### Manual Testing
 ```bash
-# Unit tests
-python -m pytest tests/
+# Send test email
+python scripts/testing/send_test_email.py
 
-# Integration testing
-python test-email-flow.py
+# Test AI Assistant locally
+python -c "from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI; print(JasminAIAssistantOpenAI().get_assistant_info())"
 
-# Load testing
-python load-test-ai-responses.py
+# Test Slack integration
+python scripts/testing/test_slack_simple.py
 ```
 
-### Cloud Testing
+### Key Test Scripts
+- `scripts/testing/test_deployment.py` - Full CI/CD verification
+- `scripts/testing/send_test_email.py` - Email testing
+- `scripts/testing/test_slack_simple.py` - Slack notifications
+- `scripts/testing/check_new_email.py` - Email verification
+
+## 🔧 Development
+
+### Project Structure
+```
+jasmin-catering-ai-agent/
+├── 📁 config/
+│   └── settings.py                     # Centralized configuration
+├── 📁 core/
+│   ├── email_processor.py              # IMAP/SMTP email handling
+│   ├── ai_assistant_openai_agent.py    # Azure OpenAI Assistant with Vector Store RAG
+│   └── slack_notifier.py               # Slack integration
+├── 📁 deployments/
+│   ├── documents/                      # 📚 Knowledge base files (uploaded to Vector Store)
+│   └── templates/                      # Configuration templates
+├── 📁 scripts/
+│   ├── deployment/                     # Azure deployment scripts
+│   ├── testing/                        # Test scripts (organized from root)
+│   ├── utilities/                      # Helper scripts (GitHub secrets, upload)
+│   └── archive/                        # Legacy scripts
+├── 📄 main.py                          # Application entry point
+├── 📄 Dockerfile                       # Container definition
+└── 📄 requirements.txt                 # Python dependencies
+```
+
+### Local Development
 ```bash
-# Manual job trigger
-az containerapp job start --name jasmin-email-processor --resource-group jasmin-catering-rg
+# Install dependencies
+pip install -r requirements.txt
 
-# Check job execution history
-az containerapp job execution list --name jasmin-email-processor --resource-group jasmin-catering-rg --output table
+# Set up environment
+cp .env.example .env
+# Edit .env with your credentials
 
-# Check logs
-az containerapp job logs show --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg --follow
+# Run locally
+python main.py
+
+# Docker development
+docker build -t jasmin-catering-ai .
+docker run --env-file .env jasmin-catering-ai
 ```
 
-### End-to-End Testing
-```mermaid
-graph LR
-    T1[Send Test Email] --> T2[Wait for Processing]
-    T2 --> T3[Verify AI Response]
-    T3 --> T4[Check Slack Notifications]
-    T4 --> T5[Validate Email Delivery]
-    T5 --> T6[Performance Metrics]
-    
-    classDef test fill:#28a745,stroke:#1e7e34,stroke-width:2px,color:#fff
-    class T1,T2,T3,T4,T5,T6 test
-```
+## 📊 Monitoring
 
-### Test Scripts & Utilities
+### Slack Integration
+- **#email-requests-and-response**: Customer inquiry notifications
+- **#jasmin-catering-logs**: System events and errors
 
-#### 📧 Send Test Email
-```bash
-# Send a test catering inquiry to ma3u-test@email.de
-python scripts/send-test-email.py
+### Performance Metrics
+- **Email Processing Time**: 2-5 seconds average
+- **AI Response Generation**: 3-8 seconds average
+- **System Availability**: 99.9% SLA target
+- **Cost per Email**: ~$0.10-0.30
 
-# This script:
-# - Sends a realistic German catering inquiry
-# - Includes detailed event requirements
-# - Tests the full email processing pipeline
-# - Verifies email delivery to the configured alias
-```
-
-#### 🔔 Test Slack Notifications
-```bash
-# Test Slack integration without sending emails
-python scripts/test-slack-notification.py
-
-# This script:
-# - Posts a simulated long email to Slack
-# - Verifies the full message is displayed (not truncated)
-# - Tests message formatting and chunking
-# - Validates Slack API connectivity
-```
-
-#### 🔐 Backup .env to 1Password
-```bash
-# Backup local .env file to 1Password vault
-./scripts/backup-env-to-1password.sh
-
-# This script:
-# - Creates a timestamped backup in JasminCatering vault
-# - Stores the complete .env file as a document
-# - Provides easy restore commands
-# - Ensures secure team sharing of credentials
-
-# Restore from backup:
-op document get 'jasmin-catering-env-YYYY-MM-DD_HH-MM-SS' --vault 'JasminCatering' > .env
-```
-
-#### 📊 Check Email Processing
-```bash
-# Verify if emails were received and processed
-python scripts/check-email-processing.py
-
-# This script:
-# - Connects to the email inbox
-# - Lists recent catering emails
-# - Identifies test emails by subject
-# - Confirms email filtering is working correctly
-```
-
-#### 🔍 Monitor Container Logs
-```bash
-# Check Azure Container Apps execution logs
-./scripts/check-container-logs.sh
-
-# This script:
-# - Shows recent job executions
-# - Displays container logs
-# - Searches for specific email processing
-# - Provides alternative monitoring methods
-```
-
-## 📚 Complete Scripts Documentation
-
-### 🚀 Deployment Scripts (`scripts/deployment/`)
-
-#### Main Container Apps Deployment
-```bash
-./scripts/deployment/deploy-container-jobs.sh
-```
-Deploys the complete Jasmin Catering AI system as Azure Container Apps Jobs with:
-- Scheduled cron job (every 5 minutes)
-- Docker image building and pushing to ACR
-- Environment variable configuration from Key Vault
-- Scale-to-zero configuration
-
-#### Alternative Azure Deployment
-```bash
-./scripts/deployment/deploy-to-azure.sh
-```
-Alternative deployment script for Azure Container Apps with:
-- Container App creation (not Jobs)
-- HTTP ingress configuration
-- Manual trigger endpoints
-
-#### AI Foundry Deployment
-```bash
-./scripts/deployment/deploy-with-ai-foundry.sh
-```
-Specialized deployment for Azure AI Foundry integration:
-- AI Hub and Project setup
-- Assistant and Vector Store configuration
-- Knowledge document upload
-
-### 🧪 Testing Scripts (`scripts/testing/`)
-
-#### Test Enhanced RAG System
-```bash
-python scripts/testing/test-enhanced-rag-system.py
-```
-Comprehensive testing of the AI Assistant with Vector Store:
-- Verifies assistant configuration
-- Tests knowledge retrieval
-- Validates response quality
-- Generates test results JSON
-
-#### Send Test Emails
-```bash
-python scripts/testing/send_test_emails.py
-```
-Sends diverse test catering inquiries:
-- Multiple event types and sizes
-- German language emails
-- Various dietary requirements
-- Edge case testing
-
-### 🛠️ Utility Scripts (`scripts/utilities/`)
-
-#### Document Indexer
-```bash
-python scripts/utilities/document-indexer.py
-```
-Indexes knowledge documents for Azure AI Search:
-- Uploads business documents
-- Creates search indices
-- Manages document versions
-
-#### Upload Files to Vector Store
-```bash
-python scripts/utilities/upload-files-rest-api.py
-```
-Direct REST API upload to OpenAI Vector Store:
-- Batch file upload
-- Progress tracking
-- Error handling
-
-#### Verify Knowledge Upload
-```bash
-python scripts/utilities/verify-knowledge-upload.py
-```
-Confirms successful knowledge base upload:
-- Lists all files in vector store
-- Validates file integrity
-- Reports upload status
-
-#### Check Vector Store Direct
-```bash
-python scripts/utilities/check-vectorstore-direct.py
-```
-Direct API access to vector store:
-- Lists files and metadata
-- Debugging tool for RAG issues
-
-#### Update Container Job Config
-```bash
-./scripts/utilities/update-container-job-config.sh
-```
-Updates Container Apps Job configuration:
-- Environment variables
-- Schedule modifications
-- Resource adjustments
-
-### 🔄 Processing Scripts (`scripts/`)
-
-#### Load Environment Configuration
-```bash
-source scripts/load-env-config.sh
-```
-Loads .env file and sets default Azure configurations:
-- Used by all deployment scripts
-- Sets Sweden Central as default region
-- Validates required variables
-
-#### Monitor Real Emails
-```bash
-python scripts/monitor-real-emails.py
-```
-Real-time email monitoring:
-- Connects via IMAP
-- Watches for new emails
-- Processes in real-time
-
-#### Process All Emails
-```bash
-python scripts/process-all-emails.py
-```
-Batch email processing:
-- Processes inbox backlog
-- Handles multiple emails
-- Generates responses
-
-#### Send Catering Emails
-```bash
-python scripts/send-catering-emails.py
-```
-Sends generated catering offers:
-- SMTP email delivery
-- Professional formatting
-- Error handling
-
-#### Get Slack Channel IDs
-```bash
-python scripts/slack-get-channel-ids.py
-```
-Retrieves Slack workspace information:
-- Lists all channels
-- Gets channel IDs for configuration
-- Verifies bot permissions
-
-### 📦 Archive Scripts (`scripts/archive/`)
-Legacy scripts preserved for reference but no longer used in production. Includes old Logic Apps scripts, initial AI agent implementations, and deprecated cleanup utilities.
-
-## 📖 Documentation Links
-
-### Architecture & Design
-- [System Architecture](docs/diagrams/system-architecture.md) - Complete system design with diagrams
-- [Sequential Workflow](docs/diagrams/sequential-workflow.md) - Step-by-step process flow
-- [Project Structure](docs/PROJECT-STRUCTURE.md) - Detailed codebase organization
-
-### Business & Requirements
-- [Project Overview (DE/EN)](docs/README.IAN.md) - Original project requirements and scope
-- [Pricing Explanation](docs/PRICING_EXPLANATION.md) - Catering pricing calculation logic
-
-### Implementation Guides
-- [Enhanced RAG System](docs/enhanced-rag-system.md) - Vector Store RAG implementation
-- [Azure AI Agent Deployment](docs/azure-ai-agent-deployment.md) - AI deployment guide
-- [Slack Setup Guide](docs/SLACK_SETUP_GUIDE.md) - Slack integration configuration
-- [Claude Development Guide](CLAUDE.md) - AI-assisted development instructions
-
-### Operations & History
-- [Project Status](docs/PROJECT_STATUS.md) - Current deployment status
-- [Cleanup Summary](docs/CLEANUP-SUMMARY.md) - Resource management guide
-- [Restructure Summary](docs/RESTRUCTURE_SUMMARY.md) - Project restructuring history
-
-## 🔧 Troubleshooting
-
-### Common Issues & Solutions
-
-#### Container Won't Start
+### Troubleshooting
 ```bash
 # Check container logs
-az containerapp job logs show --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg
+az containerapp job logs show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
 
 # Verify environment variables
-az containerapp job show --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg \
-  --query "properties.template.containers[0].env"
+az containerapp job show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --query "properties.template.containers[0].env"
 
-# Test image locally
-docker run --rm jasmin-catering-ai python -c "import main; print('OK')"
+# Manual job trigger
+az containerapp job start --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
 ```
-
-#### Secrets Not Loading
-```bash
-# Verify Key Vault access
-az keyvault secret list --vault-name jasmin-catering-kv
-
-# Check managed identity permissions
-az keyvault show --name jasmin-catering-kv \
-  --query "properties.accessPolicies"
-
-# Test secret retrieval
-az keyvault secret show --vault-name jasmin-catering-kv \
-  --name slack-bot-token --query "value"
-```
-
-#### Schedule Not Triggering
-```bash
-# Check Container Apps Job status
-az containerapp job show --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg
-
-# View recent executions
-az containerapp job execution list --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg
-
-# Manually trigger the job
-az containerapp job start --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg
-```
-
-### Performance Debugging
-```bash
-# Application Insights queries
-az monitor app-insights query --app jasmin-catering-insights \
-  --analytics-query "requests | where timestamp > ago(1h) | summarize count() by resultCode"
-
-# Container resource usage
-az containerapp job show --name jasmin-email-processor \
-  --resource-group jasmin-catering-rg \
-  --query "properties.template.containers[0].resources"
-```
-
-## 📈 Scaling & Performance
-
-### Auto-Scaling Configuration
-```yaml
-# Container Apps scaling rules
-scale:
-  minReplicas: 0      # Scale to zero when idle
-  maxReplicas: 3      # Handle traffic spikes
-  rules:
-  - name: http-requests
-    http:
-      metadata:
-        concurrentRequests: 10
-```
-
-### Performance Optimization
-- **Cold Start Time**: 2-3 seconds (optimized container)
-- **Memory Usage**: 256MB baseline, 512MB peak
-- **CPU Usage**: 0.1 vCPU baseline, 0.5 vCPU peak
-- **Concurrent Processing**: Up to 5 emails simultaneously
-
-### Cost Optimization Strategies
-1. **Scale-to-Zero**: No cost when idle (nights, weekends)
-2. **Optimized Scheduling**: Reduce trigger frequency during low activity
-3. **AI Token Management**: Efficient prompt engineering reduces costs
-4. **Container Optimization**: Minimal base image reduces storage costs
-
----
-
-## 📋 TODO - CI/CD Setup Required
-
-### ⚠️ **URGENT: Azure Service Principal Setup**
-
-**Issue**: CI/CD pipeline is currently **PAUSED** due to missing Azure credentials.
-
-**Problem**: 
-```bash
-az ad sp create-for-rbac --name "jasmin-github-actions" --role contributor --scopes "/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789" --sdk-auth
-ERROR: Insufficient privileges to complete the operation.
-```
-
-**Required Action**:
-1. **Contact Azure Administrator** to create Service Principal with these details:
-   - **Name**: `jasmin-github-actions`
-   - **Role**: `contributor` 
-   - **Scope**: `/subscriptions/6576090b-36b2-4ba1-94ae-d2f52eed2789`
-   - **Output**: JSON format for GitHub secret
-
-2. **Add GitHub Secret**:
-   - Go to: https://github.com/ma3u/jasmin-catering-ai-agent/settings/secrets/actions
-   - Create secret: `AZURE_CREDENTIALS`
-   - Value: JSON output from Service Principal creation
-
-3. **Resume CI/CD**: Once added, GitHub Actions will automatically deploy on commits to main
-
-**Current Status**: 
-- ✅ GitHub Actions workflow created
-- ✅ 6/7 required secrets added to GitHub
-- ❌ Missing `AZURE_CREDENTIALS` (requires admin privileges)
-- ⚠️ **Deployment and testing steps are PAUSED**
-
-**Reference**: See `scripts/utilities/GITHUB_SECRETS_SETUP.md` for detailed instructions.
-
----
 
 ## 🎯 Project Status
 
@@ -1022,29 +367,26 @@ ERROR: Insufficient privileges to complete the operation.
 - [x] **Enhanced architecture** - AI Assistant + Vector Store, 48% cost reduction
 - [x] **Automated scheduling** - Runs every 5 minutes with cron
 - [x] **Scale-to-zero optimization** - No costs when idle
-- [x] **Advanced RAG processing** - Semantic search through knowledge documents
 - [x] **Secure secret management** - Azure Key Vault integration
 - [x] **Real-time Slack integration** - Full notifications working
 - [x] **Email automation** - IMAP/SMTP processing operational
-- [x] **Dynamic pricing calculation** - Basis/Standard/Premium tiers
-- [x] **Error handling & monitoring** - Comprehensive logging
-- [x] **Docker containerization** - Optimized for production
+- [x] **GitHub Actions CI/CD** - Automated build and deployment pipeline
 
 ### 🚀 Production Metrics (Verified)
 - **✅ Uptime**: 100% success rate across all test executions
 - **⚡ Performance**: 37-second processing time for 5 emails
-- **💰 Cost**: $2-8/month (75% reduction from initial architecture)
+- **💰 Cost**: $60-96/month (48% reduction from initial architecture)
 - **🔄 Automation**: Every 5 minutes, fully hands-off
 - **📧 Email Processing**: 5/5 emails processed successfully
 - **🤖 AI Response Time**: 4-7 seconds per email
 - **📱 Slack Integration**: Real-time notifications operational
 
 ### 📋 Future Enhancements
+- [ ] Complete CI/CD setup (requires Azure Service Principal)
 - [ ] Multi-language support for international customers
-- [ ] Production email system (info@jasmincatering.com with 1&1/IONOS)
+- [ ] Production email system (info@jasmincatering.com)
 - [ ] CRM integration for customer management
 - [ ] Advanced analytics and business intelligence
-- [ ] Mobile app for catering management
 
 ---
 
@@ -1058,7 +400,7 @@ ERROR: Insufficient privileges to complete the operation.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
 ---
 
@@ -1067,5 +409,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **📊 System Performance**: 100% uptime | 4-7s AI response time | $0.02-0.05 per email  
 **🔒 Enterprise Security**: Azure Key Vault | Container isolation | Secure secret management  
-**📈 Cloud-Native**: Scale-to-zero cost optimization | Automated cron scheduling | 75% cost reduction  
-**🎯 Production Verified**: 5/5 test cases successful | Real-time Slack integration | Full email automation
+**📈 Cloud-Native**: Scale-to-zero cost optimization | Automated cron scheduling | 48% cost reduction
