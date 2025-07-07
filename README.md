@@ -243,6 +243,47 @@ The system leverages Azure AI Foundry's powerful Assistant capabilities with Vec
 - **German Language Support**: Native German responses for local customers
 - **Context-Aware Responses**: Personalized offers based on event requirements
 
+## 📚 Knowledge Base & Vector Store
+
+### **Vector Store Configuration**
+- **Vector Store ID**: `vs_xDbEaqnBNUtJ70P7GoNgY1qD`
+- **Name**: AssistantVectorStore_Jasmin
+- **Assistant ID**: `asst_UHTUDffJEyLQ6qexElqOopac`
+- **Status**: ✅ Active with 6 knowledge documents uploaded
+
+### **Knowledge Documents** (`deployments/documents/`)
+
+All 6 knowledge files have been uploaded to the Azure OpenAI Vector Store for RAG processing:
+
+| File | Purpose | Vector Store Status | File ID |
+|------|---------|-------------------|---------|
+| `business-conditions.md` | Terms, pricing, cancellation policies | ✅ Uploaded | `assistant-JoXkWRSQF1Vhryin7TizgX` |
+| `catering-brief.md` | Business process & system requirements | ✅ Uploaded | `assistant-BFjrHArDvusxRUr3rJkF3f` |
+| `email-template.md` | Professional communication standards | ✅ Uploaded | `assistant-JFhmqteJ7ADMT1kr94RN8j` |
+| `jasmin_catering_prompt.md` | AI agent instructions & behavior | ✅ Uploaded | `assistant-YASZfpLZFRqLLMMG5Gs6Rz` |
+| `response-examples.md` | Professional response examples | ✅ Uploaded | `assistant-W65tS9JgAPCra86jNmh2wY` |
+| `vegetarian-offer-template.md` | Vegetarian menu offerings | ✅ Uploaded | `assistant-X3MxAxuGEeQnm7rEJq2z3Q` |
+
+### **Upload Process**
+The knowledge documents were uploaded using the Azure OpenAI REST API:
+
+```bash
+# Upload knowledge files to Vector Store
+python scripts/utilities/upload-files-rest-api.py
+
+# Verify upload status
+python scripts/utilities/verify-knowledge-upload.py
+```
+
+**Note**: The OpenAI Python SDK doesn't yet support Vector Store operations in Azure OpenAI, so direct REST API calls are used for file management.
+
+### **RAG Integration**
+The AI Assistant uses the `file_search` tool to perform semantic search across all uploaded documents, enabling:
+- **Contextual Responses**: Finds relevant business information for each inquiry
+- **Accurate Pricing**: References current pricing structure and packages
+- **Policy Compliance**: Ensures responses follow business terms and conditions
+- **Professional Quality**: Uses approved templates and response examples
+
 ### 📊 Development Journey
 Check out our presentation: [**From Zero to Hero: AI-Powered Development**](https://gamma.app/docs/From-Zero-to-Hero-AI-Powered-Development-zf0bapu4b31bn5h) - showcasing how we built this system using AI-assisted development with Claude.
 
@@ -442,11 +483,16 @@ jasmin-catering-ai-agent/
 │   └── settings.py                     # Centralized configuration
 ├── 📁 core/
 │   ├── email_processor.py              # IMAP/SMTP email handling
-│   ├── ai_assistant_openai_agent.py    # Enhanced RAG AI Assistant
+│   ├── ai_assistant_openai_agent.py    # Azure OpenAI Assistant with Vector Store RAG
 │   └── slack_notifier.py               # Slack integration
 ├── 📁 deployments/
-│   ├── documents/                      # Knowledge base files
-│   ├── scripts/                        # Deployment automation
+│   ├── documents/                      # 📚 Knowledge base files (uploaded to Vector Store)
+│   │   ├── business-conditions.md      # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
+│   │   ├── catering-brief.md           # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD  
+│   │   ├── email-template.md           # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
+│   │   ├── jasmin_catering_prompt.md   # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
+│   │   ├── response-examples.md        # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
+│   │   └── vegetarian-offer-template.md # → Uploaded to vs_xDbEaqnBNUtJ70P7GoNgY1qD
 │   └── templates/                      # Configuration templates
 ├── 📁 docs/
 │   ├── diagrams/                       # Architecture & workflow diagrams
@@ -454,11 +500,9 @@ jasmin-catering-ai-agent/
 │   └── enhanced-rag-system.md         # RAG system documentation
 ├── 📁 scripts/
 │   ├── deployment/                     # Azure deployment scripts
-│   ├── testing/                        # Test suites & results
-│   ├── utilities/                      # Helper scripts
-│   └── archive/                        # Unused/deprecated scripts
-├── 📁 utils/
-│   └── send_test_emails.py             # Email testing utilities
+│   ├── testing/                        # Test suites & results (organized from root)
+│   ├── utilities/                      # Helper scripts (GitHub secrets, document upload)
+│   └── archive/                        # Legacy/deprecated scripts
 ├── 📄 main.py                          # Application entry point
 ├── 📄 agent-config.json                # AI Assistant configuration
 ├── 📄 Dockerfile                       # Container definition
