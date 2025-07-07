@@ -297,6 +297,9 @@ python -c "from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI; p
 | **Azure OpenAI** | `jasmin-openai-372bb9` | Standard | GPT-4o Assistant + Vector Store | $50-80 |
 | **Key Vault** | `jasmin-catering-kv` | Standard | Secret management | $3 |
 
+
+![Azure Deployments](/pictures/azuredeployment.png)
+
 **Total Monthly Cost**: $60-96 (vs $115-145 previous setup)
 **Cost Optimization**: 48% reduction with enhanced AI Assistant + Vector Store RAG
 
@@ -467,7 +470,54 @@ jasmin-catering-ai-agent/
 
 ## 🚀 Deployment
 
-### Automated Deployment Pipeline
+### 🔄 CI/CD Pipeline with GitHub Actions
+
+**Automated build and deployment** triggered on every commit to `main` or `fix/container-apps-email-processing` branches:
+
+```yaml
+# .github/workflows/deploy-container-app.yml
+name: Deploy Jasmin Catering AI Container App
+
+on:
+  push:
+    branches: [ main, fix/container-apps-email-processing ]
+  pull_request:
+    branches: [ main ]
+```
+
+**Pipeline Features:**
+- ✅ **Automated Container Build**: Builds Docker image on every push
+- ✅ **Azure Container Registry Push**: Automatically pushes to `jasmincateringregistry.azurecr.io`
+- ✅ **Container Apps Job Update**: Deploys to production on main branch
+- ✅ **Test Execution**: Automatically triggers job execution after deployment
+- ✅ **PR Support**: Builds containers for pull requests without deploying
+
+**Required GitHub Secrets:**
+```bash
+# In GitHub repository settings > Secrets and variables > Actions
+AZURE_CREDENTIALS = '{
+  "clientId": "your-service-principal-id",
+  "clientSecret": "your-service-principal-secret", 
+  "subscriptionId": "your-subscription-id",
+  "tenantId": "your-tenant-id"
+}'
+```
+
+**Deployment Workflow:**
+```mermaid
+graph LR
+    A[Git Push] --> B[GitHub Actions]
+    B --> C[Build Docker Image]
+    C --> D[Push to ACR]
+    D --> E[Update Container Job]
+    E --> F[Trigger Test Execution]
+    F --> G[Monitor Logs]
+    
+    classDef cicd fill:#74b9ff,stroke:#0984e3,stroke-width:2px,color:#fff
+    class A,B,C,D,E,F,G cicd
+```
+
+### Manual Deployment Pipeline
 ```bash
 # Full deployment with monitoring
 ./deploy-to-azure.sh
