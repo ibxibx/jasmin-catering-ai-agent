@@ -32,10 +32,7 @@ jasmin-catering-ai-agent/
 │   │   ├── email-processor-workflow.json # Main email workflow
 │   │   └── test-emails-workflow.json   # Testing workflows
 │   ├── scripts/                        # Deployment Automation
-│   │   ├── deploy-ai-foundry.sh        # AI service deployment
-│   │   ├── deploy-main.sh              # Main deployment script
-│   │   ├── load-env-config.sh          # Environment loader
-│   │   └── monitor-logic-app.sh        # Monitoring tools
+│   │   └── load-env-config.sh          # Environment loader
 │   └── templates/                      # Configuration Templates
 │       ├── company-policies.md         # Business policies
 │       └── order-templates.md          # Order templates

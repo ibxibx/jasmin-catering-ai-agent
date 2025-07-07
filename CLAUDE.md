@@ -53,8 +53,8 @@ jasmin-catering-ai-agent/
 
 ### Deploy the System
 ```bash
-cd deployments/scripts
-./deploy-main.sh
+cd scripts/deployment
+./deploy-container-jobs.sh
 ```
 
 ### Monitor Container Apps Job
@@ -162,14 +162,14 @@ az logic workflow show \
 
 1. **Read**: Start with this file, then README.md
 2. **Check**: Verify `.env` file exists with all variables
-3. **Deploy**: Run `./deploy-main.sh` if needed
+3. **Deploy**: Run `scripts/deployment/deploy-container-jobs.sh` if needed
 4. **Test**: Send test email to `ma3u-test@email.de`
-5. **Monitor**: Use `./monitor-logic-app.sh`
+5. **Monitor**: Use `az containerapp job execution list`
 
 ## 📚 Key Files
 
-- `deployments/scripts/deploy-main.sh` - Main deployment
-- `deployments/logic-apps/email-processor-workflow.json` - Workflow definition
+- `scripts/deployment/deploy-container-jobs.sh` - Container Apps deployment
+- `scripts/deployment/deploy-to-azure.sh` - Azure deployment script
 - `deployments/scripts/load-env-config.sh` - Environment configuration
 - `.env` - All secrets (never commit!)
 

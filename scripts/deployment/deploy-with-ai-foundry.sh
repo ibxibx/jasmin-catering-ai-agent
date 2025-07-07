@@ -7,7 +7,7 @@ echo "🚀 Deploying Jasmin Catering with Azure AI Foundry"
 echo "=================================================="
 
 # Load environment variables
-source deployments/scripts/load-env-config.sh
+source ../../deployments/scripts/load-env-config.sh
 
 # Configuration
 RESOURCE_GROUP="logicapp-jasmin-sweden_group"
