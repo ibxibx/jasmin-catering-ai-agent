@@ -256,10 +256,9 @@ Check out our presentation: [**From Zero to Hero: AI-Powered Development**](http
 ### One-Command Deployment
 ```bash
 # Clone and deploy Container Apps Jobs
-git clone <repository-url>
-
+git clone https://github.com/ma3u/jasmin-catering-ai-agent.git
+cd jasmin-catering-ai-agent
 ./scripts/deployment/deploy-container-jobs.sh
-
 ```
 
 ### Management Commands

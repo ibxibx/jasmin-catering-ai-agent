@@ -36,13 +36,9 @@ jasmin-catering-ai-agent/
 │   │   ├── deploy-main.sh              # Main deployment script
 │   │   ├── load-env-config.sh          # Environment loader
 │   │   └── monitor-logic-app.sh        # Monitoring tools
-│   ├── templates/                      # Configuration Templates
-│   │   ├── company-policies.md         # Business policies
-│   │   └── order-templates.md          # Order templates
-│   └── terraform/                      # Infrastructure as Code
-│       ├── main.tf                     # Terraform main config
-│       ├── variables.tf                # Variable definitions
-│       └── outputs.tf                  # Output definitions
+│   └── templates/                      # Configuration Templates
+│       ├── company-policies.md         # Business policies
+│       └── order-templates.md          # Order templates
 │
 ├── 📁 docs/                            # Documentation
 │   ├── diagrams/                       # Architecture & Workflow Diagrams
