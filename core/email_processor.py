@@ -29,19 +29,34 @@ class EmailProcessor:
         emails = []
         
         try:
-            # Connect to IMAP
+            # Connect to IMAP with detailed logging
+            print(f"🔌 Connecting to IMAP: {self.imap_server}:{self.imap_port}")
             mail = imaplib.IMAP4_SSL(self.imap_server, self.imap_port)
+            print(f"✅ IMAP connection established")
+            
+            print(f"🔐 Authenticating: {self.email_address}")
             mail.login(self.email_address, self.password)
+            print(f"✅ Authentication successful")
+            
+            print(f"📁 Selecting inbox...")
             mail.select('inbox')
+            print(f"✅ Inbox selected")
             
             # Search for today's emails sent TO the alias
             today = datetime.now().strftime("%d-%b-%Y")
-            status, messages = mail.search(None, f'(TO "{self.alias}") (SINCE "{today}")')
+            search_query = f'(TO "{self.alias}") (SINCE "{today}")'
+            print(f"🔍 Searching with: {search_query}")
+            print(f"📅 Today's date: {today}")
+            
+            status, messages = mail.search(None, search_query)
+            print(f"📊 Search status: {status}")
             
             if status == 'OK':
                 email_ids = messages[0].split()
+                print(f"📊 Raw email IDs found: {email_ids}")
                 # Get last N emails
                 email_ids = email_ids[-limit:] if len(email_ids) > limit else email_ids
+                print(f"📊 Processing last {limit}: {email_ids}")
                 
                 for email_id in email_ids:
                     status, msg_data = mail.fetch(email_id, '(RFC822)')
@@ -69,7 +84,12 @@ class EmailProcessor:
             mail.logout()
             
         except Exception as e:
-            print(f"Email fetch error: {e}")
+            print(f"❌ Email fetch error: {e}")
+            print(f"📧 Email config: {self.email_address} -> {self.alias}")
+            print(f"🔗 IMAP server: {self.imap_server}:{self.imap_port}")
+            import traceback
+            print(f"🔍 Full traceback:")
+            traceback.print_exc()
         
         return emails
     
