@@ -54,7 +54,7 @@ jobs:
           .
 
     - name: Deploy to Container Apps Job (main branch only)
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AZURE_CREDENTIALS != ''
       run: |
         IMAGE_NAME="${{ env.REGISTRY_NAME }}.azurecr.io/jasmin-catering-ai:${{ steps.image-tag.outputs.IMAGE_TAG }}"
         echo "Deploying image: $IMAGE_NAME"
@@ -67,20 +67,30 @@ jobs:
         
         echo "✅ Container Apps Job updated successfully"
 
+    - name: ⚠️ Azure Credentials Missing - Deployment Skipped
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AZURE_CREDENTIALS == ''
+      run: |
+        echo "⚠️ WARNING: AZURE_CREDENTIALS secret is missing!"
+        echo "🚫 Deployment and testing steps have been skipped"
+        echo "📋 To enable CI/CD deployment:"
+        echo "1. Create Azure Service Principal (requires admin privileges)"
+        echo "2. Add AZURE_CREDENTIALS secret to GitHub repository"
+        echo "3. See: scripts/utilities/GITHUB_SECRETS_SETUP.md"
+
     - name: Set up Python for testing
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AZURE_CREDENTIALS != ''
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
     - name: Install Python dependencies for testing
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AZURE_CREDENTIALS != ''
       run: |
         python -m pip install --upgrade pip
         pip install python-dotenv
 
     - name: Run automated deployment test
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AZURE_CREDENTIALS != ''
       env:
         FROM_EMAIL_ADDRESS: ${{ secrets.FROM_EMAIL_ADDRESS }}
         WEBDE_APP_PASSWORD: ${{ secrets.WEBDE_APP_PASSWORD }}
@@ -91,7 +101,7 @@ jobs:
         python scripts/testing/test_deployment.py
 
     - name: Upload test report
-      if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AZURE_CREDENTIALS != ''
       uses: actions/upload-artifact@v3
       with:
         name: deployment-test-report
@@ -106,9 +116,15 @@ jobs:
         echo "- **Region**: ${{ env.REGION }}" >> $GITHUB_STEP_SUMMARY
         
         if [ "${{ github.ref }}" = "refs/heads/main" ] && [ "${{ github.event_name }}" = "push" ]; then
-          echo "- **Status**: ✅ Deployed with automated testing" >> $GITHUB_STEP_SUMMARY
-          echo "- **Test Email**: ma3u-test@email.de" >> $GITHUB_STEP_SUMMARY
-          echo "- **Test Report**: Check artifacts for deployment_test_report.json" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ secrets.AZURE_CREDENTIALS }}" != "" ]; then
+            echo "- **Status**: ✅ Deployed with automated testing" >> $GITHUB_STEP_SUMMARY
+            echo "- **Test Email**: ma3u-test@email.de" >> $GITHUB_STEP_SUMMARY
+            echo "- **Test Report**: Check artifacts for deployment_test_report.json" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Status**: ⚠️ Built only - AZURE_CREDENTIALS missing" >> $GITHUB_STEP_SUMMARY
+            echo "- **Setup**: See scripts/utilities/GITHUB_SECRETS_SETUP.md" >> $GITHUB_STEP_SUMMARY
+            echo "- **Required**: Azure Service Principal (admin privileges needed)" >> $GITHUB_STEP_SUMMARY
+          fi
         else
           echo "- **Status**: 🔨 Built only (not deployed - not main branch)" >> $GITHUB_STEP_SUMMARY
         fi
