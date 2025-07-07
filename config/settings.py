@@ -10,7 +10,7 @@ load_dotenv()
 # Azure Configuration
 AZURE_CONFIG = {
     'subscription_id': os.getenv('AZURE_SUBSCRIPTION_ID'),
-    'resource_group': os.getenv('AZURE_RESOURCE_GROUP', 'logicapp-jasmin-sweden_group'),
+    'resource_group': os.getenv('AZURE_RESOURCE_GROUP', 'jasmin-catering-rg'),
     'location': os.getenv('AZURE_LOCATION', 'swedencentral'),
     'key_vault_name': os.getenv('AZURE_KEY_VAULT_NAME', 'jasmin-catering-kv'),
     'key_vault_uri': os.getenv('AZURE_KEY_VAULT_URI'),
