@@ -2,7 +2,32 @@
 
 An intelligent, cloud-native email processing system powered by **Azure OpenAI Assistant with Vector Store RAG**. The system automatically responds to catering inquiries using advanced AI with comprehensive knowledge base integration, generates professional catering offers in German, and provides real-time Slack monitoring.
 
-## 🏗️ Cloud Architecture
+## 📋 Table of Contents
+
+- [🏗️ System Architecture](#️-system-architecture)
+  - [Cloud Architecture](#cloud-architecture)
+  - [Email Processing Workflow](#email-processing-workflow)
+  - [Cost-Effective Architecture](#cost-effective-architecture)
+  - [Deployment Pipeline](#deployment-pipeline)
+- [🤖 Azure AI Foundry Assistants](#-azure-ai-foundry-assistants)
+- [🚀 Quick Start](#-quick-start)
+- [🏢 Azure Resources](#-azure-resources)
+  - [Resource Group](#resource-group-jasmin-catering-rg)
+  - [Key Vault Secrets](#key-vault-secrets)
+  - [Local Development Secrets Backup](#local-development-secrets-backup)
+- [🔐 Security Configuration](#-security-configuration)
+- [📊 Monitoring & Observability](#-monitoring--observability)
+- [🔧 Development](#-development)
+- [🚀 Deployment](#-deployment)
+- [🧪 Testing](#-testing)
+  - [Test Scripts & Utilities](#test-scripts--utilities)
+- [🔧 Troubleshooting](#-troubleshooting)
+- [📈 Scaling & Performance](#-scaling--performance)
+- [🎯 Project Status](#-project-status)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+## 🏗️ System Architecture
 
 For comprehensive architectural details, see our [detailed diagrams](docs/diagrams/):
 - 📊 [Complete System Architecture](docs/diagrams/system-architecture.md)
@@ -205,17 +230,21 @@ flowchart TD
     class API1,API2,API3 external
 ```
 
-## 📋 Table of Contents
+## 🤖 Azure AI Foundry Assistants
 
-- [🚀 Quick Start](#-quick-start)
-- [🏢 Azure Resources](#-azure-resources)
-- [🔐 Security Configuration](#-security-configuration)
-- [📊 Monitoring & Observability](#-monitoring--observability)
-- [🔧 Development](#-development)
-- [🚀 Deployment](#-deployment)
-- [🧪 Testing](#-testing)
-- [🔧 Troubleshooting](#-troubleshooting)
-- [📈 Scaling & Performance](#-scaling--performance)
+![AI Assistant Demo](pictures/AIAssistent2.gif)
+
+The system leverages Azure AI Foundry's powerful Assistant capabilities with Vector Store RAG for intelligent email processing and response generation. The assistant has access to 6 comprehensive knowledge documents about Jasmin Catering's services, pricing, and policies, enabling it to provide accurate and contextual responses to customer inquiries.
+
+### Key Features:
+- **Vector Store RAG**: Semantic search through business knowledge documents
+- **GPT-4o Model**: Advanced language understanding and generation
+- **File Search Tool**: Ability to search and retrieve relevant information
+- **German Language Support**: Native German responses for local customers
+- **Context-Aware Responses**: Personalized offers based on event requirements
+
+### 📊 Development Journey
+Check out our presentation: [**From Zero to Hero: AI-Powered Development**](https://gamma.app/docs/From-Zero-to-Hero-AI-Powered-Development-zf0bapu4b31bn5h) - showcasing how we built this system using AI-assisted development with Claude.
 
 ## 🚀 Quick Start
 
@@ -236,13 +265,13 @@ git clone <repository-url>
 ### Management Commands
 ```bash
 # Manual trigger
-az containerapp job start --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
+az containerapp job start --name jasmin-email-processor --resource-group jasmin-catering-rg
 
 # Check execution status
-az containerapp job execution list --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
+az containerapp job execution list --name jasmin-email-processor --resource-group jasmin-catering-rg
 
 # View logs
-az containerapp job logs show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --container jasmin-email-processor
+az containerapp job logs show --name jasmin-email-processor --resource-group jasmin-catering-rg --container jasmin-email-processor
 
 # Test AI Assistant locally
 python -c "from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI; print(JasminAIAssistantOpenAI().get_assistant_info())"
@@ -259,7 +288,7 @@ python -c "from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI; p
 
 ## 🏢 Azure Resources
 
-### Resource Group: `logicapp-jasmin-sweden_group`
+### Resource Group: `jasmin-catering-rg`
 **Location**: Sweden Central | **Purpose**: Container for all project resources
 
 | Service | Name | SKU | Purpose | Monthly Cost |
@@ -273,21 +302,70 @@ python -c "from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI; p
 **Cost Optimization**: 48% reduction with enhanced AI Assistant + Vector Store RAG
 
 ### Key Vault Secrets
+
+**Azure Key Vault**: `jasmin-catering-kv` | **URI**: `https://jasmin-catering-kv.vault.azure.net/`
+
+All sensitive configuration is securely stored in Azure Key Vault. The following secrets are required:
+
 ```bash
-# Essential secrets stored securely
-azure-ai-api-key          # OpenAI service authentication
-webde-app-password        # Email SMTP authentication  
-slack-bot-token          # Slack integration
-slack-channel-id         # Email notifications channel
-slack-log-channel-id     # System logs channel
+# Azure Configuration
+azure-subscription-id                   # Azure subscription identifier
+azure-tenant-id                         # Azure AD tenant ID
+
+# Email Configuration  
+from-email-address                      # Sender email (matthias.buchhorn@web.de)
+from-email-password                     # SMTP authentication password
+webde-app-password                      # Web.de app-specific password
+
+# OpenAI Configuration
+openai-api-key                          # Azure OpenAI API key
+openai-endpoint                         # Azure OpenAI endpoint URL
+
+# Slack Integration
+slack-bot-token                         # Slack bot OAuth token
+slack-channel-emailrequestsandresponse  # Channel ID for email notifications
+slack-channel-jasminlogs                # Channel ID for system logs
+```
+
+**Access Secrets via Azure CLI:**
+```bash
+# List all secrets
+az keyvault secret list --vault-name jasmin-catering-kv
+
+# Get a specific secret value
+az keyvault secret show --vault-name jasmin-catering-kv --name openai-api-key --query value -o tsv
+
+# Set/Update a secret
+az keyvault secret set --vault-name jasmin-catering-kv --name secret-name --value "secret-value"
+```
+
+### Local Development Secrets Backup
+
+**1Password Vault**: `JasminCatering`
+
+For secure local development, we use 1Password to manage `.env` files:
+
+```bash
+# Backup .env to 1Password
+./scripts/backup-env-to-1password.sh
+
+# This creates a timestamped backup in the JasminCatering vault
+# Example: jasmin-catering-env-2024-01-15_14-30-45
+
+# Restore .env from 1Password
+op document get 'jasmin-catering-env-YYYY-MM-DD_HH-MM-SS' --vault 'JasminCatering' > .env
+
+# List all backups
+op document list --vault 'JasminCatering' --tags 'env'
 ```
 
 ## 🔐 Security Configuration
 
 ### Managed Identity & RBAC
 ```bash
-# Container App uses managed identity for secure access
-az containerapp identity assign --name jasmin-catering-app
+# Container Apps Job uses managed identity for secure access
+az containerapp job identity assign --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg
 
 # Key Vault access policies
 az keyvault set-policy --name jasmin-catering-kv \
@@ -315,7 +393,7 @@ az keyvault secret set --vault-name jasmin-catering-kv \
 # View real-time metrics
 az monitor app-insights component show \
   --app jasmin-catering-insights \
-  --resource-group logicapp-jasmin-sweden_group
+  --resource-group jasmin-catering-rg
 ```
 
 ### Slack Monitoring Channels
@@ -366,7 +444,6 @@ jasmin-catering-ai-agent/
 │   └── slack_notifier.py               # Slack integration
 ├── 📁 deployments/
 │   ├── documents/                      # Knowledge base files
-│   ├── logic-apps/                     # Legacy Logic Apps workflows
 │   ├── scripts/                        # Deployment automation
 │   └── templates/                      # Configuration templates
 ├── 📁 docs/
@@ -444,15 +521,15 @@ python load-test-ai-responses.py
 
 ### Cloud Testing
 ```bash
-# Health check
-curl https://jasmin-catering-app.swedencentral.azurecontainerapps.io/health
+# Manual job trigger
+az containerapp job start --name jasmin-email-processor --resource-group jasmin-catering-rg
 
-# Manual trigger
-curl -X POST https://jasmin-catering-app.swedencentral.azurecontainerapps.io/trigger
+# Check job execution history
+az containerapp job execution list --name jasmin-email-processor --resource-group jasmin-catering-rg --output table
 
 # Check logs
-az containerapp logs show --name jasmin-catering-app \
-  --resource-group logicapp-jasmin-sweden_group --follow
+az containerapp job logs show --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg --follow
 ```
 
 ### End-to-End Testing
@@ -468,6 +545,71 @@ graph LR
     class T1,T2,T3,T4,T5,T6 test
 ```
 
+### Test Scripts & Utilities
+
+#### 📧 Send Test Email
+```bash
+# Send a test catering inquiry to ma3u-test@email.de
+python scripts/send-test-email.py
+
+# This script:
+# - Sends a realistic German catering inquiry
+# - Includes detailed event requirements
+# - Tests the full email processing pipeline
+# - Verifies email delivery to the configured alias
+```
+
+#### 🔔 Test Slack Notifications
+```bash
+# Test Slack integration without sending emails
+python scripts/test-slack-notification.py
+
+# This script:
+# - Posts a simulated long email to Slack
+# - Verifies the full message is displayed (not truncated)
+# - Tests message formatting and chunking
+# - Validates Slack API connectivity
+```
+
+#### 🔐 Backup .env to 1Password
+```bash
+# Backup local .env file to 1Password vault
+./scripts/backup-env-to-1password.sh
+
+# This script:
+# - Creates a timestamped backup in JasminCatering vault
+# - Stores the complete .env file as a document
+# - Provides easy restore commands
+# - Ensures secure team sharing of credentials
+
+# Restore from backup:
+op document get 'jasmin-catering-env-YYYY-MM-DD_HH-MM-SS' --vault 'JasminCatering' > .env
+```
+
+#### 📊 Check Email Processing
+```bash
+# Verify if emails were received and processed
+python scripts/check-email-processing.py
+
+# This script:
+# - Connects to the email inbox
+# - Lists recent catering emails
+# - Identifies test emails by subject
+# - Confirms email filtering is working correctly
+```
+
+#### 🔍 Monitor Container Logs
+```bash
+# Check Azure Container Apps execution logs
+./scripts/check-container-logs.sh
+
+# This script:
+# - Shows recent job executions
+# - Displays container logs
+# - Searches for specific email processing
+# - Provides alternative monitoring methods
+```
+
 ## 🔧 Troubleshooting
 
 ### Common Issues & Solutions
@@ -475,11 +617,12 @@ graph LR
 #### Container Won't Start
 ```bash
 # Check container logs
-az containerapp logs show --name jasmin-catering-app \
-  --resource-group logicapp-jasmin-sweden_group
+az containerapp job logs show --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg
 
 # Verify environment variables
-az containerapp show --name jasmin-catering-app \
+az containerapp job show --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg \
   --query "properties.template.containers[0].env"
 
 # Test image locally
@@ -502,18 +645,17 @@ az keyvault secret show --vault-name jasmin-catering-kv \
 
 #### Schedule Not Triggering
 ```bash
-# Check Logic App status
-az logic workflow show --name jasmin-catering-scheduler \
-  --resource-group logicapp-jasmin-sweden_group \
-  --query "state"
+# Check Container Apps Job status
+az containerapp job show --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg
 
-# View recent runs
-az logic workflow list-runs --name jasmin-catering-scheduler \
-  --resource-group logicapp-jasmin-sweden_group
+# View recent executions
+az containerapp job execution list --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg
 
-# Enable Logic App if disabled
-az logic workflow update --name jasmin-catering-scheduler \
-  --resource-group logicapp-jasmin-sweden_group --state Enabled
+# Manually trigger the job
+az containerapp job start --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg
 ```
 
 ### Performance Debugging
@@ -523,7 +665,8 @@ az monitor app-insights query --app jasmin-catering-insights \
   --analytics-query "requests | where timestamp > ago(1h) | summarize count() by resultCode"
 
 # Container resource usage
-az containerapp show --name jasmin-catering-app \
+az containerapp job show --name jasmin-email-processor \
+  --resource-group jasmin-catering-rg \
   --query "properties.template.containers[0].resources"
 ```
 
