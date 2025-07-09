@@ -508,6 +508,13 @@ az containerapp job start --name jasmin-email-processor --resource-group logicap
 
 ## 🎯 Project Status
 
+### 🆕 Latest Updates (2025-07-09)
+- **Duplicate Prevention Fixed**: Implemented UNSEEN email filter + mark as read functionality
+- **Project Structure Optimized**: Scripts organized into logical categories (core, monitoring, utilities, fixes)
+- **Documentation Enhanced**: Added comprehensive CLI operations guide in CLAUDE.md
+- **GitHub Links Added**: All files now have direct GitHub URLs for easy navigation
+- **Testing Suite Created**: Automated tests for duplicate prevention verification
+
 ### ✅ Completed & Deployed
 - [x] **Azure OpenAI Assistant with Vector Store RAG** - Enterprise-grade AI Agent deployed
 - [x] **6 Knowledge Documents Uploaded** - Complete business knowledge base integrated
