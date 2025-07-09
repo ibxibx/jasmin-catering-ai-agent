@@ -42,11 +42,9 @@ class EmailProcessor:
             mail.select('inbox')
             print(f"✅ Inbox selected")
             
-            # Search for today's emails sent TO the alias
-            today = datetime.now().strftime("%d-%b-%Y")
-            search_query = f'(TO "{self.alias}") (SINCE "{today}")'
+            # Search for UNSEEN emails sent TO the alias (only unread emails)
+            search_query = f'(UNSEEN) (TO "{self.alias}")'
             print(f"🔍 Searching with: {search_query}")
-            print(f"📅 Today's date: {today}")
             
             status, messages = mail.search(None, search_query)
             print(f"📊 Search status: {status}")
@@ -164,3 +162,23 @@ class EmailProcessor:
         
         text = (subject + " " + body).lower()
         return any(keyword in text for keyword in keywords)
+    
+    def mark_as_read(self, email_id: str) -> bool:
+        """Mark an email as read by its ID"""
+        try:
+            mail = imaplib.IMAP4_SSL(self.imap_server, self.imap_port)
+            mail.login(self.email_address, self.password)
+            mail.select('inbox')
+            
+            # Mark email as seen
+            mail.store(email_id, '+FLAGS', '\\Seen')
+            
+            mail.close()
+            mail.logout()
+            
+            print(f"✅ Marked email {email_id} as read")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Error marking email as read: {e}")
+            return False

@@ -93,8 +93,11 @@ class JasminCateringApp:
                             print(f"📚 Used {len(documents)} RAG documents")
                             print(f"💰 Pricing: {info.get('pricing', {})}")
                             
-                            # Mark as processed
+                            # Mark as processed in tracker
                             self.tracker.mark_processed(email_data)
+                            
+                            # Mark email as read in IMAP
+                            self.email_processor.mark_as_read(email_data['id'])
                             
                             # Post to Slack with full response
                             self.slack.post_ai_response(email_data['subject'], info, response)

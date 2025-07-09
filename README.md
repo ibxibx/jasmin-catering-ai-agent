@@ -110,6 +110,21 @@ sequenceDiagram
 | **Key Vault** | $3 | Secret management |
 | **Total** | **$60-96** | 48% cost reduction vs previous setup |
 
+## 🔐 Email Processing Security
+
+### Duplicate Prevention System
+The system implements a robust duplicate prevention mechanism:
+
+1. **UNSEEN Filter**: Only fetches unread emails from IMAP
+2. **Mark as Read**: Marks emails as read after successful processing
+3. **Email Tracker**: Maintains processing history with hash-based tracking
+4. **Azure Table Storage**: Optional persistent tracking across deployments
+
+This ensures each email is processed exactly once, preventing:
+- Multiple responses to the same inquiry
+- Resource waste from reprocessing
+- Customer confusion from duplicate offers
+
 ## 🤖 Azure AI Assistant & Vector Store
 
 ![AI Assistant Demo](pictures/AIAssistent2.gif)
@@ -311,27 +326,70 @@ python scripts/testing/test_slack_simple.py
 
 ## 🔧 Development
 
-### Project Structure
+### 📁 Optimized Project Structure
+
 ```
 jasmin-catering-ai-agent/
-├── 📁 config/
-│   └── settings.py                     # Centralized configuration
-├── 📁 core/
-│   ├── email_processor.py              # IMAP/SMTP email handling
-│   ├── ai_assistant_openai_agent.py    # Azure OpenAI Assistant with Vector Store RAG
-│   └── slack_notifier.py               # Slack integration
-├── 📁 deployments/
-│   ├── documents/                      # 📚 Knowledge base files (uploaded to Vector Store)
-│   └── templates/                      # Configuration templates
-├── 📁 scripts/
-│   ├── deployment/                     # Azure deployment scripts
-│   ├── testing/                        # Test scripts (organized from root)
-│   ├── utilities/                      # Helper scripts (GitHub secrets, upload)
-│   └── archive/                        # Legacy scripts
-├── 📄 main.py                          # Application entry point
-├── 📄 Dockerfile                       # Container definition
-└── 📄 requirements.txt                 # Python dependencies
+├── core/                           # Core business logic
+│   ├── email_processor.py          # Email handling with UNSEEN filter & mark as read
+│   ├── email_tracker.py            # Duplicate prevention tracking
+│   ├── ai_assistant_openai_agent.py # AI response generation
+│   ├── rag_system.py               # RAG implementation for knowledge base
+│   └── slack_notifier.py           # Slack integration for monitoring
+│
+├── config/                         # Configuration
+│   ├── settings.py                 # Application settings
+│   └── agent-config.json           # AI agent configuration
+│
+├── scripts/deployment/             # Organized deployment scripts
+│   ├── core/                       # Main deployment scripts
+│   │   ├── deploy-container-jobs.sh    # Primary deployment script
+│   │   └── deploy-full-stack.sh        # Master deployment orchestrator
+│   ├── monitoring/                 # Monitoring and debugging
+│   │   ├── monitor-container-job.sh    # Container Apps Job monitoring
+│   │   ├── show-email-responses.sh     # Email response viewer
+│   │   └── show-corrected-emails.sh    # Corrected email viewer
+│   ├── utilities/                  # Utility scripts
+│   │   ├── load-env-config.sh          # Environment loader
+│   │   ├── setup-github-secrets.sh     # GitHub Actions setup
+│   │   └── update-container-job-config.sh # Job configuration updater
+│   └── fixes/                      # Temporary fix scripts (documented)
+│       └── fix-duplicate-emails.sh     # Documents the UNSEEN filter fix
+│
+├── docs/                           # Documentation
+│   ├── azure-setup.md              # Azure setup guide
+│   ├── deployment-guide.md         # Deployment instructions
+│   └── troubleshooting.md          # Common issues and solutions
+│
+├── .github/workflows/              # CI/CD pipelines
+│   └── deploy-to-azure.yml         # Automated deployment workflow
+│
+├── main.py                         # Application entry point
+├── Dockerfile                      # Container definition
+├── requirements.txt                # Python dependencies
+├── .env.example                    # Environment variables template
+├── .env                            # Local environment (git-ignored)
+├── CLAUDE.md                       # AI assistant guide
+└── README.md                       # This file
 ```
+
+#### 📂 Script Categories
+
+**Core Deployment** (`scripts/deployment/core/`)
+- **Purpose**: Main deployment scripts for production use
+- **Usage**: Run these to deploy or update the system
+
+**Monitoring** (`scripts/deployment/monitoring/`)
+- **Purpose**: Monitor system health and debug issues
+- **Usage**: Run these to check job status, view logs, and track emails
+
+**Utilities** (`scripts/deployment/utilities/`)
+- **Purpose**: Helper scripts for configuration and setup
+- **Usage**: Source or run these for environment setup and configuration
+
+**Fixes** (`scripts/deployment/fixes/`)
+- **Purpose**: Document temporary fixes and solutions
+- **Usage**: Reference these for understanding past issues and their solutions
 
 ### Local Development
 ```bash

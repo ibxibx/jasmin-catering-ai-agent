@@ -1,5 +1,27 @@
 #!/bin/bash
-# Deploy Jasmin Catering AI Agent as Container Apps Job (Scheduled)
+# ==============================================================================
+# Script: deploy-container-jobs.sh
+# Purpose: Main deployment script for Jasmin Catering AI Agent
+# Type: Core Deployment Script
+# 
+# Description:
+#   Deploys the email processing system to Azure Container Apps Jobs with:
+#   - Scheduled execution every 5 minutes
+#   - AI-powered response generation
+#   - Email duplicate prevention (UNSEEN filter + mark as read)
+#   - Slack integration for monitoring
+#
+# Usage:
+#   ./scripts/deployment/deploy-container-jobs.sh
+#
+# Prerequisites:
+#   - Azure CLI logged in (az login)
+#   - .env file with all required variables
+#   - Docker image built and available
+#
+# Environment Variables Required:
+#   - See .env.example for full list
+# ==============================================================================
 
 set -e
 
