@@ -27,15 +27,6 @@ jasmin-catering-ai-agent/
 │   │   ├── jasmin_catering_prompt.md   # AI agent instructions
 │   │   ├── response-examples.md        # Professional examples
 │   │   └── vegetarian-offer-template.md # Vegetarian options
-│   ├── logic-apps/                     # Legacy Logic Apps (Archive)
-│   │   ├── ai-foundry-workflow.json    # AI Foundry integration
-│   │   ├── email-processor-workflow.json # Main email workflow
-│   │   └── test-emails-workflow.json   # Testing workflows
-│   ├── scripts/                        # Deployment Automation
-│   │   ├── deploy-ai-foundry.sh        # AI service deployment
-│   │   ├── deploy-main.sh              # Main deployment script
-│   │   ├── load-env-config.sh          # Environment loader
-│   │   └── monitor-logic-app.sh        # Monitoring tools
 │   └── templates/                      # Configuration Templates
 │       ├── company-policies.md         # Business policies
 │       └── order-templates.md          # Order templates
@@ -50,28 +41,32 @@ jasmin-catering-ai-agent/
 │   ├── KNOWLEDGE-UPLOAD-SUCCESS.md     # Knowledge upload results
 │   └── PROJECT_STATUS.md               # Current project status
 │
-├── 📁 scripts/                         # Organized Scripts
+├── 📁 scripts/                         # All Scripts Consolidated Here
 │   ├── deployment/                     # Azure Deployment Scripts
 │   │   ├── deploy-container-jobs.sh    # Main Container Apps deployment
 │   │   ├── deploy-to-azure.sh          # Alternative deployment
 │   │   └── deploy-with-ai-foundry.sh   # AI Foundry deployment
 │   ├── testing/                        # Test Scripts & Results
 │   │   ├── test-enhanced-rag-system.py # RAG system testing
-│   │   ├── test-results-*.json         # Test execution results
-│   │   └── load-test-ai-responses.py   # Performance testing
+│   │   ├── send_test_emails.py        # Send test emails utility
+│   │   └── test-results-*.json         # Test execution results
 │   ├── utilities/                      # Helper & Utility Scripts
+│   │   ├── document-indexer.py         # Azure AI Search indexer
 │   │   ├── upload-files-rest-api.py    # Vector store file upload
 │   │   ├── verify-knowledge-upload.py  # Upload verification
 │   │   ├── check-vectorstore-direct.py # Direct vector store check
 │   │   └── update-container-job-config.sh # Config updates
-│   └── archive/                        # Deprecated/Unused Scripts
-│       ├── add-ai-agents-support.sh    # Legacy AI agents script
-│       ├── cleanup-*.sh                # Old cleanup scripts
-│       ├── create-ai-agent-*.py        # Legacy agent creation
-│       └── upload-knowledge-when-available.py # Old upload script
-│
-├── 📁 utils/                           # Utility Functions
-│   └── send_test_emails.py             # Email testing utilities
+│   ├── archive/                        # Deprecated/Unused Scripts
+│   │   ├── add-ai-agents-support.sh    # Legacy AI agents script
+│   │   ├── cleanup-*.sh                # Old cleanup scripts
+│   │   ├── create-ai-agent-*.py        # Legacy agent creation
+│   │   └── upload-knowledge-when-available.py # Old upload script
+│   ├── load-env-config.sh              # Environment configuration loader
+│   ├── monitor-real-emails.py          # Real email monitoring
+│   ├── process-all-emails.py           # Email processing utility
+│   ├── send-catering-emails.py         # Send catering emails
+│   ├── slack-get-channel-ids.py        # Slack channel ID retriever
+│   └── *.sh / *.py                     # Other utility scripts
 │
 ├── 📁 pictures/                        # Documentation Images
 │   ├── agent.jpg                       # AI agent screenshots

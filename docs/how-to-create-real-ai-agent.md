@@ -1,9 +1,9 @@
 # How to Create a Real Azure AI Agent
 
 ## Current Situation
-- **No AI Agent exists** in your Azure AI Foundry
-- Your current resource doesn't support AI Agents/Assistants
-- The code uses enhanced local RAG instead
+- **AI Agent is deployed** using Azure OpenAI Assistant API
+- **Vector Store RAG** is active with 6 knowledge documents
+- **Container Apps Jobs** run the agent every 5 minutes
 
 ## To Create a Real AI Agent in Azure
 

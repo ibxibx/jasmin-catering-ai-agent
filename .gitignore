@@ -64,3 +64,4 @@ env/
 # Project specific
 rag-processing-log.txt
 .env
+.env.backup*

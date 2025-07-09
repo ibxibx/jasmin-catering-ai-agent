@@ -11,6 +11,7 @@ from datetime import datetime
 from core.email_processor import EmailProcessor
 from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI
 from core.slack_notifier import SlackNotifier
+from core.email_tracker import EmailTracker
 from config.settings import BUSINESS_CONFIG
 
 
@@ -21,6 +22,7 @@ class JasminCateringApp:
         self.email_processor = EmailProcessor()
         self.ai_assistant = JasminAIAssistantOpenAI()
         self.slack = SlackNotifier()
+        self.tracker = EmailTracker()
         
     def run(self, test_mode: bool = False):
         """Run the email processing workflow"""
@@ -59,6 +61,11 @@ class JasminCateringApp:
                 print(f"\n{'='*60}")
                 print(f"Processing {i}/{len(emails)}: {email_data['subject']}")
                 
+                # Skip if already processed
+                if self.tracker.is_processed(email_data):
+                    print(f"⏭️  Already processed, skipping...")
+                    continue
+                
                 try:
                     # Post email to Slack
                     self.slack.post_email_request(email_data)
@@ -85,6 +92,12 @@ class JasminCateringApp:
                             print(f"✅ Response sent successfully")
                             print(f"📚 Used {len(documents)} RAG documents")
                             print(f"💰 Pricing: {info.get('pricing', {})}")
+                            
+                            # Mark as processed in tracker
+                            self.tracker.mark_processed(email_data)
+                            
+                            # Mark email as read in IMAP
+                            self.email_processor.mark_as_read(email_data['id'])
                             
                             # Post to Slack with full response
                             self.slack.post_ai_response(email_data['subject'], info, response)

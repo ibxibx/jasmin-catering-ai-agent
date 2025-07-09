@@ -14,14 +14,16 @@ Time: Processing completed successfully
 - **Model**: GPT-4o
 - **Status**: ✅ Active and operational
 
-### Azure AI Search (RAG)
-- **Service**: `jasmin-catering-search`
-- **Index**: `jasmin-catering-knowledge`
-- **Documents Indexed**: 4
-  - ✅ Business Information (business-info.md)
-  - ✅ Menu Offerings (menu-offerings.md)
-  - ✅ Pricing Structure (pricing-structure.md)
-  - ✅ Service Policies (service-policies.md)
+### Azure OpenAI Assistant Vector Store (RAG)
+- **Vector Store**: `AssistantVectorStore_Jasmin`
+- **Vector Store ID**: `vs_xDbEaqnBNUtJ70P7GoNgY1qD`
+- **Documents Indexed**: 6
+  - ✅ Business Process (catering-brief.md)
+  - ✅ Business Conditions (business-conditions.md)
+  - ✅ Vegetarian Options (vegetarian-offer-template.md)
+  - ✅ Response Examples (response-examples.md)
+  - ✅ Email Templates (email-template.md)
+  - ✅ Agent Instructions (jasmin_catering_prompt.md)
 
 ## 2. Test Emails Sent
 

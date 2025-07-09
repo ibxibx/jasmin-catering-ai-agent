@@ -13,8 +13,8 @@ The Jasmin Catering AI Agent is successfully processing emails and generating pr
 - ✅ **Azure Infrastructure**: All services deployed and operational
 
 ### Technical Implementation
-- ✅ **Azure OpenAI**: GPT-4o model generating quality responses
-- ✅ **Logic Apps**: Processing workflows (simulated emails)
+- ✅ **Azure OpenAI**: GPT-4o Assistant with Vector Store RAG
+- ✅ **Container Apps Jobs**: Scheduled email processing (cron: */5 * * * *)
 - ✅ **Key Vault**: Secure credential storage
 - ✅ **Email Authentication**: Web.de SMTP working with both addresses
 - ✅ **Python Scripts**: Real email processing and sending
@@ -52,16 +52,17 @@ The Jasmin Catering AI Agent is successfully processing emails and generating pr
 | Resource Group | ✅ Active | None | Resource container |
 
 ### Monthly Cost Estimate (Current Usage)
-- **Logic Apps**: ~$5-10 (low usage)
-- **OpenAI GPT-4o**: ~$20-50 (depends on email volume)
+- **Container Apps Jobs**: ~$2-8 (scale-to-zero, scheduled runs)
+- **OpenAI GPT-4o + Vector Store**: ~$50-80 (depends on email volume)
 - **Key Vault**: ~$1-2 (secret operations)
-- **Total**: ~$26-62/month
+- **Container Registry**: ~$5 (basic tier)
+- **Total**: ~$58-95/month
 
 ## 🎯 Next Immediate Steps
 
-1. **This Week**: Implement Logic Apps email connectors
-2. **Next Week**: Set up production email integration
-3. **Following Week**: Deploy monitoring and alerts
+1. **This Week**: Set up production email (info@jasmincatering.com)
+2. **Next Week**: Implement monitoring and alerts
+3. **Following Week**: Deploy advanced analytics
 
 ## 🚀 Demo Ready Features
 
@@ -75,9 +76,9 @@ The system can currently demonstrate:
 ## 📝 Technical Debt
 
 ### Minor Issues
-- Email processing uses Python scripts instead of native Logic Apps connectors
-- No real-time monitoring dashboard
-- Limited error handling in email processing
+- No real-time monitoring dashboard beyond Azure Portal
+- Limited retry logic for transient failures
+- Manual knowledge base updates (no CI/CD for documents)
 
 ### Future Improvements
 - Implement proper logging and telemetry
