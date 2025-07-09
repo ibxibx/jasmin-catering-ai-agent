@@ -8,6 +8,23 @@ This file provides essential guidance for Claude Code when working with the Jasm
 **Current Status**: Deployed to Sweden Central, monitoring emails at `ma3u-test@email.de`
 **Technology**: Azure Container Apps + Azure AI Foundry Assistants + CLI deployment
 
+## 🚀 Quick Start Commands
+
+```bash
+# First time setup
+source scripts/deployment/utilities/load-env-config.sh
+az login
+./scripts/deployment/deploy-container-jobs.sh
+
+# Daily operations
+./scripts/deployment/monitoring/monitor-container-job.sh stats  # Check health
+python scripts/testing/send-test-email.py                      # Test system
+./scripts/deployment/monitoring/monitor-container-job.sh latest # View logs
+
+# Common fixes
+az containerapp job start --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group  # Restart job
+```
+
 ## 🚨 Critical Information
 
 ### 1. **Region: Sweden Central**
@@ -117,33 +134,113 @@ https://jasmin-catering-resource.cognitiveservices.azure.com/openai/deployments/
 Container Apps Job (*/5 * * * *) → Fetch UNSEEN Emails → AI Assistant Processing → Vector Store RAG → Generate Response → Send Email → Mark as Read
 ```
 
-## 💡 Key Azure CLI Commands
+## 💡 Common Command-Line Operations
+
+### 🔧 Local Development Commands
 
 ```bash
-# Load environment
-source scripts/deployment/utilities/load-env-config.sh
+# Environment Setup
+source scripts/deployment/utilities/load-env-config.sh  # Load environment variables
+python -m venv venv                                    # Create virtual environment
+source venv/bin/activate                               # Activate virtual environment
+pip install -r requirements.txt                        # Install dependencies
 
-# Deploy to Azure Container Apps
-./scripts/deployment/deploy-container-jobs.sh
+# Testing
+python scripts/testing/test-duplicate-prevention.py    # Test email duplicate prevention
+python scripts/testing/send-test-email.py             # Send test email to ma3u-test@email.de
+python main.py                                        # Run application locally
 
-# Monitor job executions
+# Git Operations
+git status                                            # Check changes
+git add -A                                           # Stage all changes
+git commit -m "feat: description"                    # Commit with conventional message
+git push origin main                                 # Push to origin
+gh pr create --repo ibxibx/jasmin-catering-ai-agent # Create PR to upstream
+
+# Monitoring
+./scripts/deployment/monitoring/monitor-container-job.sh list    # List executions
+./scripts/deployment/monitoring/monitor-container-job.sh latest  # View latest logs
+./scripts/deployment/monitoring/monitor-container-job.sh stats   # Show statistics
+```
+
+### ☁️ Azure CLI Commands
+
+```bash
+# Authentication & Setup
+az login                                              # Login to Azure
+az account set --subscription $AZURE_SUBSCRIPTION_ID  # Set subscription
+az group list --query "[?contains(name, 'jasmin')]" -o table  # Find resource groups
+
+# Container Apps Job Management
+az containerapp job list \
+  --resource-group logicapp-jasmin-sweden_group \
+  --query "[].name" -o tsv                           # List all jobs
+
+az containerapp job show \
+  --name jasmin-email-processor \
+  --resource-group logicapp-jasmin-sweden_group \
+  --query "{status:properties.runningStatus, schedule:properties.configuration.scheduleTriggerConfig.cronExpression}" \
+  -o json                                            # Show job details
+
 az containerapp job execution list \
   --name jasmin-email-processor \
   --resource-group logicapp-jasmin-sweden_group \
-  --query "[0:5].{Name:name, Status:properties.status, Time:properties.startTime}" -o table
+  --query "[0:10].{Name:name, Status:properties.status, Time:properties.startTime}" \
+  -o table                                           # List recent executions
 
-# View latest logs
-LATEST=$(az containerapp job execution list --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --query "[0].name" -o tsv)
-az containerapp job logs show \
+# Manual Job Execution
+az containerapp job start \
+  --name jasmin-email-processor \
+  --resource-group logicapp-jasmin-sweden_group      # Manually trigger job
+
+# View Logs
+LATEST=$(az containerapp job execution list \
   --name jasmin-email-processor \
   --resource-group logicapp-jasmin-sweden_group \
-  --job-execution-name $LATEST
+  --query "[0].name" -o tsv)
 
-# Update job image
+az containerapp logs show \
+  --name jasmin-email-processor \
+  --resource-group logicapp-jasmin-sweden_group \
+  --type system                                      # System logs
+
+# Container Registry
+az acr repository list \
+  --name jasmincateringregistry \
+  -o table                                           # List repositories
+
+az acr repository show-tags \
+  --name jasmincateringregistry \
+  --repository jasmin-catering-ai \
+  --orderby time_desc \
+  --top 5 -o tsv                                     # Show recent image tags
+
+# Key Vault Secrets
+az keyvault secret list \
+  --vault-name jasmin-catering-kv \
+  --query "[].name" -o tsv                           # List all secrets
+
+az keyvault secret show \
+  --vault-name jasmin-catering-kv \
+  --name openai-api-key \
+  --query "value" -o tsv                             # Get secret value
+
+# Deployment
+./scripts/deployment/deploy-container-jobs.sh        # Full deployment
+./scripts/deployment/core/deploy-full-stack.sh --dry-run  # Dry run deployment
+
+# Update Container Image
 az containerapp job update \
   --name jasmin-email-processor \
   --resource-group logicapp-jasmin-sweden_group \
   --image jasmincateringregistry.azurecr.io/jasmin-catering-ai:latest
+
+# Environment Variables
+az containerapp job show \
+  --name jasmin-email-processor \
+  --resource-group logicapp-jasmin-sweden_group \
+  --query "properties.template.containers[0].env[].name" \
+  -o tsv                                             # List env variables
 ```
 
 ## 🐍 Key Python Operations
@@ -194,23 +291,73 @@ for email in emails:
 3. **Pricing**: 35-45€ per person for catering
 4. **Business**: Event catering 15-500 guests
 
-## 🚀 Quick Fixes
+## 🚀 Quick Fixes & Troubleshooting
+
+### Common Operations by Scenario
+
+#### 🔍 Check System Health
+```bash
+# Quick health check
+./scripts/deployment/monitoring/monitor-container-job.sh stats
+az containerapp job show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --query "properties.runningStatus"
+```
+
+#### 🐛 Debug Failed Execution
+```bash
+# Get failed execution name
+FAILED=$(az containerapp job execution list --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --query "[?properties.status=='Failed'][0].name" -o tsv)
+
+# View logs
+az containerapp logs show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --type system
+
+# Check container logs
+az containerapp logs show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --container jasmin-email-processor
+```
+
+#### 📧 Test Email Processing
+```bash
+# Send test email
+python scripts/testing/send-test-email.py
+
+# Wait 5 minutes, then check
+sleep 300 && ./scripts/deployment/monitoring/monitor-container-job.sh latest | grep -E "(Processing|UNSEEN|Skipping)"
+```
+
+#### 🔄 Update and Redeploy
+```bash
+# Make code changes, then:
+git add -A && git commit -m "fix: description"
+./scripts/deployment/deploy-container-jobs.sh
+# Monitor deployment
+watch -n 10 'az containerapp job show --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group --query "properties.provisioningState"'
+```
+
+#### 🔑 Update Secrets
+```bash
+# Update in Key Vault
+az keyvault secret set --vault-name jasmin-catering-kv --name "secret-name" --value "new-value"
+
+# Restart job to pick up new secrets
+az containerapp job stop --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
+az containerapp job start --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
+```
 
 ### If deployment fails:
 1. Check region is `swedencentral`
 2. Verify `.env` file exists
 3. Ensure Azure CLI logged in: `az login`
+4. Check ACR access: `az acr login --name jasmincateringregistry`
 
 ### If AI processing fails:
-1. Verify Cognitive Services endpoint (not AI Foundry)
-2. Check API key in `.env`
-3. Test endpoint with curl
+1. Verify AI endpoint in environment
+2. Check API key: `az keyvault secret show --vault-name jasmin-catering-kv --name openai-api-key`
+3. Test Assistant: `python -c "from core.ai_assistant_openai_agent import JasminAIAssistantOpenAI; ai = JasminAIAssistantOpenAI(); print(ai.assistant_id)"`
 
 ### If duplicate emails are sent:
-1. Verify UNSEEN filter in `fetch_catering_emails()`
-2. Check `mark_as_read()` is called after processing
-3. Verify email tracker is working: `tracker.is_processed(email)`
-4. Check logs: `./scripts/deployment/monitoring/monitor-container-job.sh latest`
+1. Verify UNSEEN filter: `grep -n "UNSEEN" core/email_processor.py`
+2. Check mark_as_read calls: `grep -n "mark_as_read" main.py`
+3. Verify email tracker: `ls -la /tmp/processed_emails.json`
+4. Check logs: `./scripts/deployment/monitoring/monitor-container-job.sh latest | grep -E "(Already processed|Skipping)"`
 
 ## 🎯 Next Steps for New Claude Instance
 
@@ -248,6 +395,7 @@ Remember: The goal is full automation with zero manual Azure Portal steps!
 - After processing, mark the email as read
 - Create and move scripts always to `scripts/deployment/`, never to root
 - Always document the purpose of the script (temporary fixes, deployment, or general tasks)
+- **New Memory**: Key and common Azure and local CLI operations added for easier reference and quick access to critical commands
 
 ## 🛠️ Architecture Principles
 
