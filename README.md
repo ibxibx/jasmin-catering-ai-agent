@@ -135,6 +135,8 @@ This ensures each email is processed exactly once, preventing:
 - **Vector Store ID**: `vs_xDbEaqnBNUtJ70P7GoNgY1qD`
 - **Knowledge Documents**: 6 files uploaded ✅
 - **RAG Tool**: `file_search` enabled
+- **SDK**: [Azure AI SDK for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/ai-agents-readme?view=azure-python)
+- **Implementation**: [`core/ai_assistant_openai_agent.py`](core/ai_assistant_openai_agent.py)
 
 ### Vector Store Knowledge Base
 
@@ -431,6 +433,27 @@ az containerapp job show --name jasmin-email-processor --resource-group logicapp
 # Manual job trigger
 az containerapp job start --name jasmin-email-processor --resource-group logicapp-jasmin-sweden_group
 ```
+
+## 📚 Documentation & Resources
+
+### Official Azure Documentation
+- [Azure AI SDK for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/ai-agents-readme?view=azure-python) - Python SDK for Azure AI Services
+- [Azure AI Assistants Overview](https://learn.microsoft.com/en-us/azure/ai-services/openai/assistants-overview) - Understanding Assistants API
+- [Azure Container Apps Jobs](https://learn.microsoft.com/en-us/azure/container-apps/jobs) - Scheduled and event-driven jobs
+- [Azure Container Apps CLI](https://learn.microsoft.com/en-us/cli/azure/containerapp) - CLI reference for Container Apps
+
+### Key Implementation Files
+- **AI Assistant Integration**: [`core/ai_assistant_openai_agent.py`](core/ai_assistant_openai_agent.py)
+- **Email Processing**: [`core/email_processor.py`](core/email_processor.py)
+- **Duplicate Prevention**: [`core/email_tracker.py`](core/email_tracker.py)
+- **RAG System**: [`core/rag_system.py`](core/rag_system.py)
+- **Deployment Script**: [`scripts/deployment/deploy-container-jobs.sh`](scripts/deployment/deploy-container-jobs.sh)
+- **Monitoring Tools**: [`scripts/deployment/monitoring/`](scripts/deployment/monitoring/)
+
+### Architecture Decisions
+- **Why Container Apps?** Scale-to-zero, cron scheduling, CLI-friendly deployment
+- **Why AI Assistants?** Built-in vector store, persistent threads, file search
+- **Why UNSEEN Filter?** Prevents duplicate processing without complex state management
 
 ## 🎯 Project Status
 
