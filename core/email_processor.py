@@ -29,19 +29,32 @@ class EmailProcessor:
         emails = []
         
         try:
-            # Connect to IMAP
+            # Connect to IMAP with detailed logging
+            print(f"🔌 Connecting to IMAP: {self.imap_server}:{self.imap_port}")
             mail = imaplib.IMAP4_SSL(self.imap_server, self.imap_port)
-            mail.login(self.email_address, self.password)
-            mail.select('inbox')
+            print(f"✅ IMAP connection established")
             
-            # Search for today's emails sent TO the alias
-            today = datetime.now().strftime("%d-%b-%Y")
-            status, messages = mail.search(None, f'(TO "{self.alias}") (SINCE "{today}")')
+            print(f"🔐 Authenticating: {self.email_address}")
+            mail.login(self.email_address, self.password)
+            print(f"✅ Authentication successful")
+            
+            print(f"📁 Selecting inbox...")
+            mail.select('inbox')
+            print(f"✅ Inbox selected")
+            
+            # Search for UNSEEN emails sent TO the alias (only unread emails)
+            search_query = f'(UNSEEN) (TO "{self.alias}")'
+            print(f"🔍 Searching with: {search_query}")
+            
+            status, messages = mail.search(None, search_query)
+            print(f"📊 Search status: {status}")
             
             if status == 'OK':
                 email_ids = messages[0].split()
+                print(f"📊 Raw email IDs found: {email_ids}")
                 # Get last N emails
                 email_ids = email_ids[-limit:] if len(email_ids) > limit else email_ids
+                print(f"📊 Processing last {limit}: {email_ids}")
                 
                 for email_id in email_ids:
                     status, msg_data = mail.fetch(email_id, '(RFC822)')
@@ -69,7 +82,12 @@ class EmailProcessor:
             mail.logout()
             
         except Exception as e:
-            print(f"Email fetch error: {e}")
+            print(f"❌ Email fetch error: {e}")
+            print(f"📧 Email config: {self.email_address} -> {self.alias}")
+            print(f"🔗 IMAP server: {self.imap_server}:{self.imap_port}")
+            import traceback
+            print(f"🔍 Full traceback:")
+            traceback.print_exc()
         
         return emails
     
@@ -144,3 +162,23 @@ class EmailProcessor:
         
         text = (subject + " " + body).lower()
         return any(keyword in text for keyword in keywords)
+    
+    def mark_as_read(self, email_id: str) -> bool:
+        """Mark an email as read by its ID"""
+        try:
+            mail = imaplib.IMAP4_SSL(self.imap_server, self.imap_port)
+            mail.login(self.email_address, self.password)
+            mail.select('inbox')
+            
+            # Mark email as seen
+            mail.store(email_id, '+FLAGS', '\\Seen')
+            
+            mail.close()
+            mail.logout()
+            
+            print(f"✅ Marked email {email_id} as read")
+            return True
+            
+        except Exception as e:
+            print(f"❌ Error marking email as read: {e}")
+            return False
