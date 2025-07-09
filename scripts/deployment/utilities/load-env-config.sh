@@ -1,4 +1,23 @@
 #!/bin/bash
+# ==============================================================================
+# Script: load-env-config.sh
+# Purpose: Load environment variables from .env file
+# Type: Utility Script
+#
+# Description:
+#   Sources environment variables from .env file and validates required vars
+#   for Azure deployment. Sets default region to Sweden Central.
+#
+# Usage:
+#   source scripts/deployment/utilities/load-env-config.sh
+#
+# Required .env Variables:
+#   - AZURE_SUBSCRIPTION_ID
+#   - AZURE_RESOURCE_GROUP  
+#   - AZURE_AI_API_KEY
+#   - WEBDE_EMAIL_ALIAS
+#   - WEBDE_APP_PASSWORD
+# ==============================================================================
 
 # Load environment configuration for Jasmin Catering deployments
 # Default deployment location: Sweden Central

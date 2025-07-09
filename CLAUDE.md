@@ -174,3 +174,12 @@ az logic workflow show \
 - `.env` - All secrets (never commit!)
 
 Remember: The goal is full automation with zero manual Azure Portal steps!
+
+## 🔍 Implementation Memories
+
+- Remember the latest implementation and deployment in Azure
+- Fix implemented to avoid multiple answers to one email
+- Always use the unseen filter
+- After processing, mark the email as read
+- Create and move scripts always to `scripts/deployment/`, never to root
+- Always document the purpose of the script (temporary fixes, deployment, or general tasks)
