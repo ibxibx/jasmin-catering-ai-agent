@@ -2,9 +2,21 @@
 
 An intelligent, cloud-native email processing system powered by **Azure OpenAI Assistant with Vector Store RAG**. The system automatically responds to catering inquiries using advanced AI with comprehensive knowledge base integration, generates professional catering offers in German, and provides real-time Slack monitoring.
 
+## 🔗 Quick Links
+
+| Resource | Link |
+|----------|------|
+| **Repository** | [github.com/ma3u/jasmin-catering-ai-agent](https://github.com/ma3u/jasmin-catering-ai-agent) |
+| **Main Application** | [`main.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/main.py) |
+| **AI Assistant** | [`core/ai_assistant_openai_agent.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/core/ai_assistant_openai_agent.py) |
+| **Deployment Script** | [`scripts/deployment/deploy-container-jobs.sh`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/deployment/deploy-container-jobs.sh) |
+| **Claude Guide** | [`CLAUDE.md`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/CLAUDE.md) |
+| **Azure AI Docs** | [Azure AI SDK for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/ai-agents-readme?view=azure-python) |
+
 ## 📋 Table of Contents
 
 - [🏗️ System Architecture](#️-system-architecture)
+- [🔐 Email Processing Security](#-email-processing-security)
 - [🤖 Azure AI Assistant & Vector Store](#-azure-ai-assistant--vector-store)
 - [🚀 Quick Start](#-quick-start)
 - [🏢 Azure Resources](#-azure-resources)
@@ -13,6 +25,7 @@ An intelligent, cloud-native email processing system powered by **Azure OpenAI A
 - [🧪 Testing](#-testing)
 - [🔧 Development](#-development)
 - [📊 Monitoring](#-monitoring)
+- [📚 Documentation & Resources](#-documentation--resources)
 - [🎯 Project Status](#-project-status)
 
 ## 🏗️ System Architecture
@@ -439,23 +452,68 @@ az containerapp job start --name jasmin-email-processor --resource-group logicap
 ### Official Azure Documentation
 - [Azure AI SDK for Python](https://learn.microsoft.com/en-us/python/api/overview/azure/ai-agents-readme?view=azure-python) - Python SDK for Azure AI Services
 - [Azure AI Assistants Overview](https://learn.microsoft.com/en-us/azure/ai-services/openai/assistants-overview) - Understanding Assistants API
+- [Azure AI Assistants Quickstart](https://learn.microsoft.com/en-us/azure/ai-services/openai/assistants-quickstart) - Getting started guide
+- [Vector Stores in Assistants](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/assistants-vector-stores) - File search with vector stores
 - [Azure Container Apps Jobs](https://learn.microsoft.com/en-us/azure/container-apps/jobs) - Scheduled and event-driven jobs
-- [Azure Container Apps CLI](https://learn.microsoft.com/en-us/cli/azure/containerapp) - CLI reference for Container Apps
+- [Container Apps CLI Reference](https://learn.microsoft.com/en-us/cli/azure/containerapp) - Complete CLI command reference
+- [Container Apps with GitHub Actions](https://learn.microsoft.com/en-us/azure/container-apps/github-actions) - CI/CD integration
+- [Azure Key Vault Overview](https://learn.microsoft.com/en-us/azure/key-vault/general/overview) - Secret management
 
-### Key Implementation Files
-- **AI Assistant Integration**: [`core/ai_assistant_openai_agent.py`](core/ai_assistant_openai_agent.py)
-- **Email Processing**: [`core/email_processor.py`](core/email_processor.py)
-- **Duplicate Prevention**: [`core/email_tracker.py`](core/email_tracker.py)
-- **RAG System**: [`core/rag_system.py`](core/rag_system.py)
-- **Deployment Script**: [`scripts/deployment/deploy-container-jobs.sh`](scripts/deployment/deploy-container-jobs.sh)
-- **Monitoring Tools**: [`scripts/deployment/monitoring/`](scripts/deployment/monitoring/)
+### Core Implementation Files
+- **AI Assistant Integration**: [`core/ai_assistant_openai_agent.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/core/ai_assistant_openai_agent.py)
+- **Email Processing**: [`core/email_processor.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/core/email_processor.py)
+- **Duplicate Prevention**: [`core/email_tracker.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/core/email_tracker.py)
+- **RAG System**: [`core/rag_system.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/core/rag_system.py)
+- **Slack Integration**: [`core/slack_notifier.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/core/slack_notifier.py)
+- **Main Application**: [`main.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/main.py)
+
+### Configuration Files
+- **Settings**: [`config/settings.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/config/settings.py)
+- **Agent Config**: [`agent-config.json`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/agent-config.json)
+- **Dockerfile**: [`Dockerfile`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/Dockerfile)
+- **Requirements**: [`requirements.txt`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/requirements.txt)
+- **Environment Template**: [`.env.example`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/.env.example)
+
+### Deployment & Operations Scripts
+- **Main Deployment**: [`scripts/deployment/deploy-container-jobs.sh`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/deployment/deploy-container-jobs.sh)
+- **Full Stack Deploy**: [`scripts/deployment/core/deploy-full-stack.sh`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/deployment/core/deploy-full-stack.sh)
+- **Monitor Jobs**: [`scripts/deployment/monitoring/monitor-container-job.sh`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/deployment/monitoring/monitor-container-job.sh)
+- **Environment Loader**: [`scripts/deployment/utilities/load-env-config.sh`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/deployment/utilities/load-env-config.sh)
+
+### Testing Scripts
+- **Duplicate Prevention Test**: [`scripts/testing/test-duplicate-prevention.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/testing/test-duplicate-prevention.py)
+- **Send Test Email**: [`scripts/testing/send-test-email.py`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/testing/send-test-email.py)
+- **Azure Deployment Test**: [`scripts/testing/test-azure-deployment.sh`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/testing/test-azure-deployment.sh)
+
+### Knowledge Base Documents
+- **Business Conditions**: [`deployments/documents/business-conditions.md`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/deployments/documents/business-conditions.md)
+- **Catering Brief**: [`deployments/documents/catering-brief.md`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/deployments/documents/catering-brief.md)
+- **Email Template**: [`deployments/documents/email-template.md`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/deployments/documents/email-template.md)
+- **AI Prompt**: [`deployments/documents/jasmin_catering_prompt.md`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/deployments/documents/jasmin_catering_prompt.md)
+
+### CI/CD & Documentation
+- **GitHub Actions Workflow**: [`.github/workflows/deploy-to-azure.yml`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/.github/workflows/deploy-to-azure.yml)
+- **Claude Guide**: [`CLAUDE.md`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/CLAUDE.md)
+- **Project Structure**: [`scripts/deployment/PROJECT_STRUCTURE.md`](https://github.com/ma3u/jasmin-catering-ai-agent/blob/main/scripts/deployment/PROJECT_STRUCTURE.md)
 
 ### Architecture Decisions
 - **Why Container Apps?** Scale-to-zero, cron scheduling, CLI-friendly deployment
 - **Why AI Assistants?** Built-in vector store, persistent threads, file search
 - **Why UNSEEN Filter?** Prevents duplicate processing without complex state management
 
+### 🔗 Repository Links
+- **This Repository**: [ma3u/jasmin-catering-ai-agent](https://github.com/ma3u/jasmin-catering-ai-agent)
+- **Upstream Repository**: [ibxibx/jasmin-catering-ai-agent](https://github.com/ibxibx/jasmin-catering-ai-agent)
+- **Pull Requests**: [View PRs](https://github.com/ibxibx/jasmin-catering-ai-agent/pulls)
+
 ## 🎯 Project Status
+
+### 🆕 Latest Updates (2025-07-09)
+- **Duplicate Prevention Fixed**: Implemented UNSEEN email filter + mark as read functionality
+- **Project Structure Optimized**: Scripts organized into logical categories (core, monitoring, utilities, fixes)
+- **Documentation Enhanced**: Added comprehensive CLI operations guide in CLAUDE.md
+- **GitHub Links Added**: All files now have direct GitHub URLs for easy navigation
+- **Testing Suite Created**: Automated tests for duplicate prevention verification
 
 ### ✅ Completed & Deployed
 - [x] **Azure OpenAI Assistant with Vector Store RAG** - Enterprise-grade AI Agent deployed
