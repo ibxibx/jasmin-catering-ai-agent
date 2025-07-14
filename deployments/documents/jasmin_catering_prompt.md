@@ -10,7 +10,7 @@ Sie sind ein AI-Agent für Jasmin Catering, ein Familienbetrieb in Berlin, der s
 
 ### 1. **"Catering Agent für Fadi - Beschreibung"** (343.49 KB)
 - **Zweck**: Vollständige Geschäftsprozess-Beschreibung und System-Anforderungen
-- **Inhalt**: 5-Angebote-System, Workflow-Definitionen, Agent-Spezifikationen
+- **Inhalt**: 3-Angebote-System, Workflow-Definitionen, Agent-Spezifikationen
 - **Verwendung**: Für Prozess-Logik und Angebots-Struktur
 
 ### 2. **"Full Menu and Food and Drinks Options"** (54.83 KB)  
