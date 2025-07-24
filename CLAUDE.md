@@ -105,6 +105,25 @@ https://jasmin-catering-resource.cognitiveservices.azure.com/openai/deployments/
 - Mark emails as read after processing: `email_processor.mark_as_read(email_id)`
 - Hash-based tracking with `EmailTracker` class
 
+### 4. GitHub Actions Secrets Issue ⚠️ FIXED
+**Problem**: GitHub Actions workflow failing with "Unrecognized named-value: 'secrets'"
+```yaml
+# ❌ This doesn't work - secrets not accessible in if conditions
+if: github.ref == 'refs/heads/main' && secrets.AZURE_CREDENTIALS != ''
+```
+**Solution**: Check secrets within step logic instead:
+```yaml
+# ✅ Fixed approach
+if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+run: |
+  if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+    echo "⚠️ WARNING: AZURE_CREDENTIALS secret is missing!"
+    exit 0
+  fi
+  # Continue with deployment logic...
+```
+**Status**: ✅ Fixed in `.github/workflows/deploy-container-app.yml`
+
 ## 🏗️ Architecture Decisions
 
 1. **Azure AI Foundry** for AI capabilities
