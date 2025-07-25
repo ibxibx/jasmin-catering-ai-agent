@@ -1,0 +1,38 @@
+{
+  "email_id": "test_email_20250725_101308",
+  "metadata": {
+    "from": "kunde@example.com",
+    "to": "ma3u-test@email.de",
+    "subject": "🍽️ Catering Anfrage - Test 20250725_101308",
+    "date": "2025-07-25T10:13:08.373448",
+    "status": "ready_for_processing"
+  },
+  "body": "Sehr geehrtes Jasmin Catering Team,\n\nwir möchten ein Catering für unsere Firmenveranstaltung beauftragen:\n\n📅 **Veranstaltungsdetails:**\n- Datum: 25.08.2025  \n- Uhrzeit: 12:00 - 16:00 Uhr\n- Ort: Berlin, Unter den Linden 15\n- Anlass: Firmen-Sommerfest\n\n👥 **Gästeanzahl:** 55 Personen\n\n🍽️ **Catering-Wünsche:**\n- Finger Food für den Empfang (12:00-13:00)\n- Warmes Buffet für das Mittagessen (13:00-15:00)  \n- Kaffee & Kuchen für den Nachmittag (15:00-16:00)\n\n🌱 **Besondere Anforderungen:**\n- 40% vegetarische Optionen\n- 10% vegane Alternativen  \n- 3 glutenfreie Hauptgerichte\n- Berücksichtigung von Nussallergien\n\n💰 **Budget:** ca. 2.500 EUR\n\n📦 **Service:**\n- Lieferung und Aufbau bis 11:30 Uhr\n- Professionelle Präsentation der Speisen\n- Abholung der Materialien am Abend\n\nBitte senden Sie uns drei verschiedene Angebote (Basis, Standard, Premium) \nmit detaillierter Aufschlüsselung der Speisen und Preise.\n\nMit freundlichen Grüßen\nSarah Weber\nEvent Management\nMustermann & Partner GmbH\n\n📞 Tel: +49 30 12345678\n📧 Email: s.weber@mustermann-partner.de\n\n---\n🤖 Test Email erstellt am: 2025-07-25 10:13:08\n📋 Test ID: 20250725_101308\n🔧 Status: Bereit für AI-Processing",
+  "ai_processing_notes": {
+    "extracted_info": {
+      "guests": 55,
+      "date": "25.08.2025",
+      "location": "Berlin, Unter den Linden 15",
+      "budget": 2500,
+      "special_requirements": [
+        "vegetarian",
+        "vegan",
+        "gluten-free",
+        "nut-allergy"
+      ],
+      "service_type": [
+        "finger_food",
+        "warm_buffet",
+        "coffee_cake"
+      ],
+      "delivery_required": true
+    },
+    "expected_ai_response": "3 structured offers (Basis, Standard, Premium) in German with detailed menu items and pricing"
+  },
+  "test_metadata": {
+    "created_by": "Working Test Email Solution",
+    "purpose": "Demonstrate realistic catering inquiry processing",
+    "ai_assistant_ready": true,
+    "processing_status": "pending"
+  }
+}

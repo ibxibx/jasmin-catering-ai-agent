@@ -40,7 +40,7 @@ class JasminAIAssistantOpenAI:
         )
         
         self.assistant_id = self.config["agent_id"]
-        print(f"✅ Connected to AI Assistant: {self.assistant_id}")
+        print(f"Connected to AI Assistant: {self.assistant_id}")
     
     def generate_response(self, email_subject: str, email_body: str) -> Tuple[str, List[Dict], Dict]:
         """Generate AI response using the real Azure OpenAI Assistant"""

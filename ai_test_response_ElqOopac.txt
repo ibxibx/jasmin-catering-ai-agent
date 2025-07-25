@@ -1,0 +1,30 @@
+AI Assistant Test Response
+Assistant ID: asst_UHTUDffJEyLQ6qexElqOopac
+Timestamp: N/A
+==================================================
+
+QUERY:
+Sehr geehrtes Jasmin Catering Team,
+
+wir möchten ein Catering für unsere Firmenveranstaltung beauftragen:
+
+- Datum: 15.09.2025
+- Uhrzeit: 12:00 - 18:00 Uhr  
+- Ort: Berlin, Alexanderplatz
+- Anlass: Firmenjubiläum
+- Gästeanzahl: 35 Personen
+- Budget: ca. 1800 EUR
+
+Gewünschte Leistungen:
+- Finger Food für den Empfang
+- Warmes Buffet zum Mittagessen
+- Vegetarische und vegane Optionen
+
+Bitte senden Sie uns drei verschiedene Angebote.
+
+Mit freundlichen Grüßen
+Thomas Mueller
+Event Manager
+
+RESPONSE:
+(None, [], {'error': 'Connection error.'})

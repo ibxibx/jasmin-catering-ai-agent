@@ -1,0 +1,32 @@
+{
+  "email_id": "test_email_20250725_101328",
+  "metadata": {
+    "from": "kunde@example.com",
+    "to": "ma3u-test@email.de",
+    "subject": "Catering Anfrage - Test 20250725_101328",
+    "date": "2025-07-25T10:13:28.288956",
+    "status": "ready_for_processing"
+  },
+  "body": "Sehr geehrtes Jasmin Catering Team,\n\nwir möchten ein Catering für unsere Firmenveranstaltung beauftragen:\n\nVERANSTALTUNGSDETAILS:\n- Datum: 25.08.2025  \n- Uhrzeit: 12:00 - 16:00 Uhr\n- Ort: Berlin, Unter den Linden 15\n- Anlass: Firmen-Sommerfest\n\nGÄSTEANZAHL: 55 Personen\n\nCATERING-WÜNSCHE:\n- Finger Food für den Empfang (12:00-13:00)\n- Warmes Buffet für das Mittagessen (13:00-15:00)  \n- Kaffee & Kuchen für den Nachmittag (15:00-16:00)\n\nBESONDERE ANFORDERUNGEN:\n- 40% vegetarische Optionen\n- 10% vegane Alternativen  \n- 3 glutenfreie Hauptgerichte\n- Berücksichtigung von Nussallergien\n\nBUDGET: ca. 2.500 EUR\n\nSERVICE:\n- Lieferung und Aufbau bis 11:30 Uhr\n- Professionelle Präsentation der Speisen\n- Abholung der Materialien am Abend\n\nBitte senden Sie uns drei verschiedene Angebote (Basis, Standard, Premium) \nmit detaillierter Aufschlüsselung der Speisen und Preise.\n\nMit freundlichen Grüßen\nSarah Weber\nEvent Management\nMustermann & Partner GmbH\n\nTel: +49 30 12345678\nEmail: s.weber@mustermann-partner.de\n\n---\nTest Email erstellt am: 2025-07-25 10:13:28\nTest ID: 20250725_101328\nStatus: Bereit für AI-Processing",
+  "ai_processing_notes": {
+    "extracted_info": {
+      "guests": 55,
+      "date": "25.08.2025",
+      "location": "Berlin, Unter den Linden 15",
+      "budget": 2500,
+      "special_requirements": [
+        "vegetarian",
+        "vegan",
+        "gluten-free",
+        "nut-allergy"
+      ],
+      "service_type": [
+        "finger_food",
+        "warm_buffet",
+        "coffee_cake"
+      ],
+      "delivery_required": true
+    },
+    "expected_ai_response": "3 structured offers (Basis, Standard, Premium) in German with detailed menu items and pricing"
+  }
+}

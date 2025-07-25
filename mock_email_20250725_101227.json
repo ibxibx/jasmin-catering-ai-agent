@@ -1,0 +1,8 @@
+{
+  "from": "test.customer@example.com",
+  "to": "ma3u-test@email.de",
+  "subject": "Catering Anfrage - Test 20250725_101227",
+  "body": "Sehr geehrtes Jasmin Catering Team,\n\nwir möchten ein Catering für unsere Firmenveranstaltung anfragen:\n\n📅 Datum: 20.08.2025\n📍 Ort: Berlin, Potsdamer Platz\n👥 Anzahl Personen: 45\n🍽️ Art: Finger Food + warme Hauptgerichte\n💰 Budget: ca. 2000 EUR\n\n🌱 Besondere Wünsche:\n- 30% vegetarische Optionen\n- 2 vegane Alternativen\n- Glutenfreie Optionen gewünscht\n- Lieferung bis 11:00 Uhr\n\nBitte senden Sie uns drei verschiedene Angebote zu.\n\nMit freundlichen Grüßen\nMax Mustermann\nFirmenveranstaltungen GmbH\n\n--\nTest Email generiert am: 2025-07-25 10:12:31\nTest ID: 20250725_101227\n",
+  "timestamp": "2025-07-25T10:12:31.163007",
+  "processed": false
+}
